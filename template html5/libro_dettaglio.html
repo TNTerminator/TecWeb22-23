@@ -1,0 +1,38 @@
+
+			<article class="book book_full">
+				<h2>Titolo</h2>
+				<figure>
+					<figcaption>Immagine di copertina</figcaption>
+					<img>
+				</figure>
+				<dl>
+					<dt class="author">Autore</dt>
+						<dd class="author">Michele Marchioro</dd> <!-- TODO decidere se aprire una pagina dedicata all'autore -->
+					<dt class="editor">Casa editrice</dt>
+						<dd class="editor">Mondadori</dd>
+					<dt class="pubdate">Anno pubblicazione</dt>
+						<dd class="pubdate">2022</dd>
+					<dt class="price">Prezzo</dt>
+						<dd class="price">&euro; 123,99 (IVA incl.)</dd>
+					<dt class="sold_quantity">Venduti</dt>
+						<dd class="sold_quantity">1099</dd>
+					<dt class="rating">Valutazione</dt>
+						<dd class="rating"><span class="val_5">Ottimo</span></dd>
+						<!--
+							Numero di stelline visualizzato tramite CSS tramite class 
+							val_1 => Pessimo
+							val_2 => Brutto
+							val_3 => Neutro
+							val_4 => Bello
+							val_5 => Ottimo
+						-->
+				</dl>
+				<p aria-label="Descrizione">Descrizione breve</p><!-- TODO serve la label ARIA?!? -->
+				<a role="button" href="/cart/add/<id_libro>">Metti in carrello</a>
+				<a role="button" href="">Maggiori informazioni</a>
+				<!-- TODO questi due a button, li mettiamo dentro dei tag p? -->
+
+				<aside>
+					<h3>Informazioni sull'autore</h3>
+				</aside>
+			</article>
