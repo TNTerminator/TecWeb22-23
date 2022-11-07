@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="##-Page::DESCRIPTION-##">
+	<meta name="keywords" content="##-Page::KEYWORDS-##">
+	<meta name="author" content="##-Global::AUTHORS-##">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"><!-- TODO verfificare se serve -->
+    <title>##-Global::TITLE-##</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+	<header role="banner">
+		<h1>##-Global::SITE_NAME-##</h1>
+	</header>
+
+	<!-- 
+		Riferimento: 
+		https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/
+		https://www.w3.org/WAI/ARIA/apg/example-index/breadcrumb/index.html
+	-->
+	<!-- TODO teniamo il link sull'elemento corrente?! anche considerando che è markato don ARIA? -->
+	<nav id="breadcrumbs" aria-label="Breadcrumbs">
+        ##-Breadcrumbs-##
+		<ol>
+		  <li><a href="../../">Home</a></li>
+		  <li><a href="/WAI/ARIA/apg/patterns/">Voce 1</a></li>
+		  <li><a href="/WAI/ARIA/apg/patterns/breadcrumb/">Voce 2</a></li>
+		  <li><a href="index.html" aria-current="page">Voce corrente</a></li>
+		</ol>
+	</nav>
+
+	<!--
+		Riferimento:
+		https://www.w3.org/WAI/tutorials/menus/
+	-->
+    <nav role="navigation" id="menu" aria-labelledby="menu_heading">
+		<h2 id="menu_heading" class="hideable">Menu</h2>
+		##-MainMenu-##
+        <ul>
+            <li class="current_page" aria-current="page"><a href="">Home</a></li> <!-- Usiamo un class, azinché un id, per qualificare l'elemento che rappresenta la pagina corrente, in quanto potrebbero esistere più elementi con questa funzione. -->
+			<li>Categorie
+				<ul>
+					<li><a href="">Categoria 1</a></li>
+					<li><a href="">Categoria 2</a></li>
+					<li><a href="">Categoria 3</a></li>
+				</ul>
+			</li>
+            <li><a href="">Login</a></li>
+            <li><a href="">Logout</a></li>
+            <li><a href="">Registrati</a></li>
+            <li><a href="">Carrello</a></li>
+            <li><a href="">Profilo</a></li>
+            <li><a href="">Libreria acquisti</a></li>
+        </ul>
+    </nav>
+
+	<main role="main">
+		##-Page::Content-##
+	</main>
+
+	<footer role="contentinfo">
+		<p>Progetto realizzato per il corso Tecnologie Web a.a. 2022-2023 da:</p>
+		<address> <!-- Elemento semantico destinato anche a qualificare le informazioni di contatto degli autori -->
+			<a href="mailto:alberto.casadomoreno@studenti.unipd.it" rel="author">Alberto Casado Moreno</a>
+			<a href="mailto:gabriele.saracco@studenti.unipd.it" rel="author">Gabriele Saracco</a>
+			<a href="mailto:matteo.baggio.5@studenti.unipd.it" rel="author">Matteo Baggio</a>
+			<a href="mailto:michele.marchioro.1@studenti.unipd.it" rel="author">Michele Marchioro</a>
+			<!-- TODO dubbi: mettere un elenco UL oppure no? -->
+		</address>
+	</footer>
+  </body>
+</html>
