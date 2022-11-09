@@ -1,0 +1,25 @@
+<form action="" method="post"> <!-- TODO confermare POST rispetto a GET o viceversa, e mettere l'action una volta definita-->
+<legend>Nome utente</legend>
+<label for="username">Nome utente:</label>
+<input name="username" id="username" maxlength="20"/><br>
+<legend>Password</legend>
+<label for="password">Password:</label>
+<input type="Password" name="password" id="password" maxlength="16"/><br> <!-- TODO nelle slide ID è cerchiato in rosso,
+non so perchè-->
+<legend>Email</legend>
+<label for="email">Email:</label>
+<input type="email" name="email" id="email"><br>
+<legend>Data di nascita</legend>
+<label for="birthdate">Data di nascita:</label>
+<input type="date" name="birtdate" id="birthdate"><br> <!-- TODO bisogna pensare agli utenti con sistemi di date non gg-mm-aaaa? -->
+<legend>Metodo di pagamento</legend>
+<select name="paymethod" id="paymethod">
+	<optgroup label="Metodo di pagamento">
+		<option>Paypal</option>
+		<option>Carta di credito</option>
+		<option>Skrill</option> <!-- TODO ci sono altri metodi che vogliamo mettere? -->
+	</optgroup>
+</select><br><br>
+<input type="submit" value="Registrati">
+</form>
+<!-- TODO non so se vadano o meno i <br> alla fine dei campi per renderli distaccati o se ci pensi il CSS -->
