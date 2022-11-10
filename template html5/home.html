@@ -52,13 +52,13 @@
             <li><a href="">Registrati</a></li>
             <li><a href="">Carrello</a></li>
             <li><a href="">Profilo</a></li>
-            <li><a href="">Libreria acquisti</a></li>
+            <li><a href="">I miei acquisti</a></li>
         </ul>
     </nav>
 
 	<main role="main">
 		##-Page::Content-##
-		<section>
+		<section id="books_new">
 			<h2>Ultime novità</h2>
 
 			<article class="book book_thumbnail">
@@ -87,19 +87,31 @@
 							val_5 => Ottimo
 						-->
 				</dl>
-				<a role="button" href="/cart/add/<id_libro>">Metti in carrello</a>
+				<a role="button" href="/cart/add/<id_libro>">Aggiungi al carrello</a>
 				<a role="button" href="">Maggiori informazioni</a>
 				<!-- TODO questi due a button, li mettiamo dentro dei tag p? -->
 			</article>
 		</section>
 
-		<section>
+		<section id="books_favorites">
 			<h2>I pi&ugrave; graditi</h2>
 		</section>
 
-		<section>
+		<section id="books_sold">
 			<h2>I pi&ugrave; venduti</h2>
 		</section>
+
+		<aside>
+			<form method="post" action="" id="form_search">
+				<fieldset>
+					<legend>Ricerca nel catalogo</legend>
+
+					<label for="search_text" class="hideable">Testo da cercare:</label>
+					<input type="text" name="search_text" id="search_text">
+					<input type="submit" name="CMD_Search" value="Cerca">
+				</fieldset>
+			</form>
+		</aside>
 	</main>
 
 	<footer role="contentinfo">
