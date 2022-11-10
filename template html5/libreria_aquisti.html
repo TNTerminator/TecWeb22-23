@@ -1,0 +1,35 @@
+<section>
+    <h2>Libreria</h2>
+
+    <article class="book book_library">
+        <h3>Titolo</h3>
+        <figure>
+            <figcaption>Immagine di copertina</figcaption>
+            <img>
+        </figure>
+
+        <dl>
+            <dt class="author">Autore</dt>
+                <dd class="author">Michele Marchioro</dd>
+            <dt class="editor">Casa editrice</dt>
+                <dd class="editor">Mondadori</dd>
+            <dt class="pubdate">Anno pubblicazione</dt>
+                <dd class="pubdate">2022</dd>
+            <dt class="rating">Valutazione</dt>
+        </dl>
+
+        <!--
+            TODO lasciarli come <a> o metterli come <button>
+        -->
+
+        <a role="button" class="rating" href="/library/rating"><span class="val_5">Ottimo</span></a>
+                <!--Numero di stelline visualizzato tramite CSS tramite class 
+                    val_1 => Pessimo
+                    val_2 => Brutto
+                    val_3 => Neutro
+                    val_4 => Bello
+                    val_5 => Ottimo-->
+        <a role="button" href="/library/continue">Continua a leggere</a>
+        <a role="button" href="/library/info">Maggiori informazioni</a>
+    </article>
+</section>
