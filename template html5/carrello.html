@@ -1,0 +1,33 @@
+<section id="cart_list">
+    <h2>Contenuto Carrello (<span class="cart_quantity">0</span>)</h2>
+    <!--
+        Numero di elementi nel carrello visualizzato tramite CSS?
+    -->
+    <!-- TODO di default quando il carrello è vuoto o vi si accede da guest
+        dovrebbe mostrare solo "Contenuto Carrello" seguito da "Carrello Vuoto"
+        con un button "Inizia con gli acquisti" che reindirizza al negozio -->
+    <article class="book book_cart">
+        <figure>
+            <figcaption>Immagine di copertina</figcaption>
+            <img>
+        </figure>
+        <h3>Titolo</h3>
+        <span class="price">&euro; 123,99 (IVA incl.)</span>
+        <a role="button" href="/cart/modify_quantity/remove">-</a>
+        <span class="product_quantity">0</span>
+        <a role="button" href="/cart/modify_quantity/add">+</a>
+        <a role="button" href="/cart/remove/<id_libro>">Rimuovi</a>
+        <!-- TODO non ho trovato modi "accessibili" standard per i carrelli,
+            solo guide penose come: https://uxplanet.org/how-to-create-a-shopping-cart-ui-using-html-css-e5db3cd55aa0 
+            quindi è da capire insieme come fare per evitare di correggere e perder tempo -->
+    </article>
+</section>
+<section id="cart_recap"> <!-- Sezione da tenere a lato -->
+    <dl>
+        <dt>Subtotale (<span class="cart_quantity">0</span> oggetti)</dt>
+            <dd class="price">&euro; 123,99 (IVA incl.)</dd>
+    </dl>
+    <a role="button" href="check_out/purchase">Acquista</a>
+</section>
+
+<!-- style reference: https://merch.riotgames.com/en-us/cart -->
