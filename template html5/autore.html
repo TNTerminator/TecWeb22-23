@@ -1,22 +1,24 @@
-<article class="book author">
-
-    <h2 class="author">Michele Marchioro</h2>
+<article class="author">
+    <h2>Michele Marchioro</h2>
     <figure>
         <figcaption>Foto autore</figcaption>
         <img>
     </figure>
     
     <dl>
-        <dt class="BirthDate">Dato di nascita</dt>
-            <dd class="BirthDate"> 01/01/970</dd>
-        <dt class="BirthPlace">Luogo di nascita</dt>
-            <dd class="BirthPlace"> Padova</dd>
-        <dt class="Lenguage">Lingua originale degli scritti</dt>
-            <dd class="Lenguage"> Italiano</dd>           
+        <dt class="birthdate">Data di nascita</dt>
+            <dd class="birthdate">01/01/1970</dd>
+        <dt class="birthplace">Luogo di nascita</dt>
+            <dd class="birthplace"> Padova</dd>
+        <dt class="language">Lingua originale degli scritti</dt>
+            <dd class="language"> Italiano</dd>           
     </dl>
 
-    <section>
-        <h2>Libri scritti</h2>
+	<p class="additional_info">Blablablablabla</p>
+
+    <aside> <!-- NOTE: aside perché il contenuto può essere rimosso senza perdere di sostanza nella scheda di autore -->
+        <h2>Libri scritti da Michele Marchioro</h2> <!-- NOTE: h2 come il contenitore, giustificato dal fatto che
+		tramite testo, riporto anche il nome dell'autore rendendo la sezione aside allo stesso livello gerarchico del contenitore. -->
 
         <article class="book book_thumbnail">
             <h3>Titolo</h3>
@@ -42,10 +44,9 @@
                         val_5 => Ottimo
                     -->
             </dl>
-            <a role="button" href="/cart/add/<id_libro>">Metti in carrello</a>
+            <a role="button" href="/cart/add/<id_libro>">Aggiungi al carrello</a>
             <a role="button" href="">Maggiori informazioni</a>
             <!-- TODO questi due a button, li mettiamo dentro dei tag p? -->
         </article>
-    </section>
-    
+    </aside>    
 </article>

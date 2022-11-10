@@ -1,33 +1,60 @@
 <section id="cart_list">
     <h2>Contenuto Carrello (<span class="cart_quantity">0</span>)</h2>
-    <!--
-        Numero di elementi nel carrello visualizzato tramite CSS?
-    -->
-    <!-- TODO di default quando il carrello è vuoto o vi si accede da guest
-        dovrebbe mostrare solo "Contenuto Carrello" seguito da "Carrello Vuoto"
-        con un button "Inizia con gli acquisti" che reindirizza al negozio -->
-    <article class="book book_cart">
-        <figure>
-            <figcaption>Immagine di copertina</figcaption>
-            <img>
-        </figure>
-        <h3>Titolo</h3>
-        <span class="price">&euro; 123,99 (IVA incl.)</span>
-        <a role="button" href="/cart/modify_quantity/remove">-</a>
-        <span class="product_quantity">0</span>
-        <a role="button" href="/cart/modify_quantity/add">+</a>
-        <a role="button" href="/cart/remove/<id_libro>">Rimuovi</a>
-        <!-- TODO non ho trovato modi "accessibili" standard per i carrelli,
-            solo guide penose come: https://uxplanet.org/how-to-create-a-shopping-cart-ui-using-html-css-e5db3cd55aa0 
-            quindi è da capire insieme come fare per evitare di correggere e perder tempo -->
-    </article>
-</section>
-<section id="cart_recap"> <!-- Sezione da tenere a lato -->
-    <dl>
-        <dt>Subtotale (<span class="cart_quantity">0</span> oggetti)</dt>
-            <dd class="price">&euro; 123,99 (IVA incl.)</dd>
-    </dl>
-    <a role="button" href="check_out/purchase">Acquista</a>
+    <!-- PHP: gestione carrello vuoto -->
+	<p class="msg_emptycart">Non hai ancora aggiunto alcun elemento al tuo carrello.</p>
+
+	<!-- PHP: gestione carrello pieno -->
+	
+	<!-- lista di libri del carrello -->
+	<article class="book book_cart" id="item0">
+		<figure>
+			<figcaption>Immagine di copertina</figcaption>
+			<img>
+		</figure>
+		<h3>Titolo</h3>
+		<dl>
+			<dt class="price">Prezzo unitario</dt>
+				<dd class="price">&euro; 123,99 (IVA incl.)</dd>
+			<dt class="quantity">Quantità nel carrello</dt>
+				<dd class="quantity">2</dd>
+			<dt class="price_total">Prezzo totale</dt>
+				<dd class="price_total">&euro; 247,98 (IVA incl.)</dd>
+		</dl>
+		<form method="post" action="">
+			<label for="item0_quantity">Inserisci la nuova quantità</label>
+			<input type="text" name="item0_quantity" id="item0_quantity" value="1"> 
+			<input type="submit" value="Aggiorna quantità">
+		</form>
+
+		<a role="button" href="/cart/remove/<id_libro>">Rimuovi dal carrello</a>
+
+
+		<!-- TODO da chiedere a prof se possiamo fare così
+		<span class="price">&euro; 123,99 (IVA incl.)</span>
+
+		<label for="CMD_QMinus_item0" class="hideable">Diminuisci la quantità di questo prodotto di una unit&agrave;</label>
+		<input type="submit" name="CMD_QMinus_item0" id="CMD_QMinus_item0" value="-">
+
+		<span id="product_quantity_item0" class="quantity">1</span>
+
+		<label for="CMD_QPlus_item0" class="hideable">Aumenta la quantità di questo prodotto di una unit&agrave;</label>
+		<input type="submit" name="CMD_QPlus_item0" id="CMD_QPlus_item0" value="+">
+		-->
+
+
+
+		<!-- TODO non ho trovato modi "accessibili" standard per i carrelli,
+			solo guide penose come: https://uxplanet.org/how-to-create-a-shopping-cart-ui-using-html-css-e5db3cd55aa0 
+			quindi è da capire insieme come fare per evitare di correggere e perder tempo -->
+	</article>
+
+
+	<aside id="cart_recap"> <!-- Sezione da tenere a lato --> <!-- TODO riflettere bene su accessibilità; posso togliere il titolo? 
+		o almeno semplificare la frase del paragrafo? -->
+		<h2>Totale del carrello</h2>
+		<p>Totale del contenuto del carrello (<span class="cart_quantity">1</span> oggetti): &euro; 123,99 (IVA incl.)</p>
+		<a role="button" href="check_out/purchase">Acquista</a>
+	</aside>
 </section>
 
 <!-- style reference: https://merch.riotgames.com/en-us/cart -->
