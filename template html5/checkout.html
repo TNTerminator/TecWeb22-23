@@ -1,0 +1,55 @@
+
+	<h2>Procedi con l'acquisto</h2>
+	<p>Totale del contenuto del carrello (<span class="cart_quantity">1</span> oggetti): &euro; 123,99 (IVA incl.)</p>
+
+	<form action="" method="post">
+		<fieldset>
+			<legend>Informazioni di spedizione</legend>
+			<p>Inserisci il tuo indirizzo di spedizione compilando i seguenti campi.</p>
+			<div>
+				<label for="province">Provincia (obbligatorio)</label>
+				<select name="province" id="province" required>
+					<option>Seleziona la tua provincia</option>
+					##- -##
+				</select>
+				<p class="field_error">Attenzione: la provincia &egrave; obbligatoria.</p>
+			</div>
+
+			<div>
+				<label for="city">Comune (obbligatorio)</label>
+				<input type="text" name="city" id="city" required>
+				<p class="field_error">Attenzione: il comune &egrave; obbligatorio.</p>
+			</div>
+
+			<div>
+				<label for="postalcode"><abbr title="Codice di avviamento postale">CAP</abbr> (obbligatorio)</label>
+				<input type="text" name="postalcode" id="postalcode" minlength="5" maxlength="5" required>
+				<p class="field_error">Attenzione: il CAP &egrave; obbligatorio e deve essere esattamente lungo 5 caratteri.</p>
+			</div>
+
+			<div>
+				<label for="address">Indirizzo e numero civico (obbligatorio)</label>
+				<input type="text" name="address" id="address" required>
+				<p class="field_error">Attenzione: l'indirizzo e il numero civico sono obbligatori.</p>
+			</div>
+		</fieldset>
+		
+		<fieldset>
+			<legend>Informazioni per il pagamento</legend>
+			<div>
+				<label for="paymethod">Metodo di pagamento</label>
+				<select name="paymethod" id="paymethod">
+					<option>Seleziona una opzione...</option>
+					<option value="">Carta di credito</option>
+					<option value="">Paypal</option>
+					<option value="">Skrill</option>
+				</select>
+				<p class="field_error">Attenzione: il metodo di pagamento &egrave; obbligatorio.</p>
+			</div>
+		</fieldset>
+
+		<p class="warning">Attenzione: Proseguendo con il completamento del pagamento, si verr&agrave; reindirizzati verso il sito sicuro dello specifico gestore dei pagamenti.</p>
+		<input type="submit" value="Completa il pagamento">
+
+	</form>
+	

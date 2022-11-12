@@ -1,25 +1,63 @@
-<form action="" method="post"> <!-- TODO confermare POST rispetto a GET o viceversa, e mettere l'action una volta definita-->
-<legend>Nome utente</legend>
-<label for="username">Nome utente:</label>
-<input name="username" id="username" maxlength="20"/><br>
-<legend>Password</legend>
-<label for="password">Password:</label>
-<input type="Password" name="password" id="password" maxlength="16"/><br> <!-- TODO nelle slide ID è cerchiato in rosso,
-non so perchè-->
-<legend>Email</legend>
-<label for="email">Email:</label>
-<input type="email" name="email" id="email"><br>
-<legend>Data di nascita</legend>
-<label for="birthdate">Data di nascita:</label>
-<input type="date" name="birtdate" id="birthdate"><br> <!-- TODO bisogna pensare agli utenti con sistemi di date non gg-mm-aaaa? -->
-<legend>Metodo di pagamento</legend>
-<select name="paymethod" id="paymethod">
-	<optgroup label="Metodo di pagamento">
-		<option>Paypal</option>
-		<option>Carta di credito</option>
-		<option>Skrill</option> <!-- TODO ci sono altri metodi che vogliamo mettere? -->
-	</optgroup>
-</select><br><br>
-<input type="submit" value="Registrati">
+<form action="" method="post">
+	<p>Per registrarti al sito ##-Global::TITLE-##, compila il seguente form in ogni sua parte.</p>
+	<fieldset>
+		<legend>Profilo utente</legend>
+
+		<div>
+			<label for="username"><span lang="en">Username (obbligatorio)</span></label>
+			<input type="text" name="username" id="username" maxlength="20" minlength="8" required />
+			<p class="field_instructions">Lo <span lang="en">Username</span> deve essere lungo almeno 8 caratteri e non più di 20.</p>
+			<p class="field_error">Attenzione: lo <span lang="en">Username</span> non rispetta i criteri di lunghezza.</p>
+		</div>
+
+		<div>
+			<label for="password"><span lang="en">Password (obbligatorio)</span></label>
+			<input type="password" name="password" id="password" maxlength="16" minlength="8" required />
+			<p class="field_instructions">La <span lang="en">Password</span> deve essere lunga almeno 8 caratteri e non più di 16.<br>
+			Inoltre deve contenere almeno una lettera minuscola, una maiuscola e un numero.</p>
+			<p class="field_error">Attenzione: la <span lang="en">Password</span> non rispetta i criteri richiesti.</p>
+		</div>
+
+		<div>
+			<label for="email"><span lang="en">Email (obbligatorio)</span></label>
+			<input type="email" name="email" id="email" required>
+			<p class="field_error">Attenzione: l'<span lang="en">Email</span> non &egrave; valida.</p>
+		</div>
+
+		<div>
+			<label for="birthdate">Data di nascita (obbligatorio)</label>
+			<input type="date" name="birtdate" id="birthdate" required>
+			<p class="field_instructions">La data di nascita deve essere inserita nel formato GG-MM-AAAA, ovvero due cifre per il giorno, due cifre per il mese e quattro cifre per l'anno.</p>
+			<p class="field_error">Attenzione: la data di nascita non &egrave; valida.</p>
+		</div>
+
+		<div>
+			<label for="additionalinfo">Descrivi il posto dove preferisci leggere</label>
+			<textarea name="additionalinfo" id="additionalinfo"></textarea>
+			<p class="field_instructions">Descrivi il luogo in cui preferisci goderti la lettura dei tuoi libri, e come lo vivi.</p>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Informativa sul trattamento dei dati personali</legend>
+
+		<div>
+			<div class="informativa_privacy">
+				<!-- Testo dell'informativa della privacy -->
+			</div>
+			<input type="checkbox" name="privacy_agreement" id="privacy_agreement" value="1" required>
+			<label for="privacy_agreement">Dichiaro di aver letto l'informativa sul trattamento dei dati personali (obbligatorio)</label>
+			<p class="field_error">Attenzione: &egrave; necessario leggere l'informativa sul trattamento dei dati personali e selezionare la relativa <span lang="en">checkbox</span>.</p>
+		</div>
+
+		<div>
+			Accetti di ricevere una <span lang="en">newsletter</span> sulle nostre novità, promozioni e iniziative?
+			<input type="radio" name="marketing_agreement" id="marketing_agreement_no" value="0" checked>
+			<label for="marketing_agreement_no">No, rifiuto.</label>
+			<input type="radio" name="marketing_agreement" id="marketing_agreement_yes" value="1">
+			<label for="marketing_agreement_yes">Si, accetto.</label>
+		</div>
+	</fieldset>
+	
+	<input type="submit" value="Registrati">
 </form>
-<!-- TODO non so se vadano o meno i <br> alla fine dei campi per renderli distaccati o se ci pensi il CSS -->
