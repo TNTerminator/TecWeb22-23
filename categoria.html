@@ -1,0 +1,107 @@
+<body>
+	<header role="banner">
+		<h1>##-Global::SITE_NAME-##</h1>
+	</header>
+
+	<!-- 
+		Riferimento: 
+		https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/
+		https://www.w3.org/WAI/ARIA/apg/example-index/breadcrumb/index.html
+	-->
+	<!-- TODO teniamo il link sull'elemento corrente?! anche considerando che è markato don ARIA? -->
+	<nav id="breadcrumbs" aria-label="Breadcrumbs">
+        ##-Breadcrumbs-##
+		<ol>
+		  <li><a href="../../">Home</a></li>
+		  <li><a href="/WAI/ARIA/apg/patterns/">Voce 1</a></li>
+		  <li><a href="/WAI/ARIA/apg/patterns/breadcrumb/">Voce 2</a></li>
+		  <li><a href="index.html" aria-current="page">Categoria scelta</a></li>
+		</ol>
+	</nav>
+
+	<!--
+		Riferimento:
+		https://www.w3.org/WAI/tutorials/menus/
+	-->
+    <nav role="navigation" id="menu" aria-labelledby="menu_heading">
+		<h2 id="menu_heading" class="hideable">Menu</h2>
+		##-MainMenu-##
+        <ul>
+            <li class="current_page" aria-current="page"><a href="">Home</a></li> <!-- Usiamo un class, azinché un id, per qualificare l'elemento che rappresenta la pagina corrente, in quanto potrebbero esistere più elementi con questa funzione. -->
+			<li>Categorie
+				<ul>
+					<li><a href="">Categoria 1</a></li>
+					<li><a href="">Categoria 2</a></li>
+					<li><a href="">Categoria 3</a></li>
+				</ul>
+			</li>
+            <li><a href="">Login</a></li>
+            <li><a href="">Logout</a></li>
+            <li><a href="">Registrati</a></li>
+            <li><a href="">Carrello</a></li>
+            <li><a href="">Profilo</a></li>
+            <li><a href="">I miei acquisti</a></li>
+        </ul>
+    </nav>
+
+	<main role="main">
+		##-Page::Content-##
+		<section id="books_new">
+			<h2>Horror</h2>
+
+			<article class="book book_thumbnail">
+				<h3>Titolo</h3>
+				<figure>
+					<figcaption>Immagine di copertina</figcaption>
+					<img>
+				</figure>
+				<dl>
+					<dt class="author">Autore</dt>
+						<dd class="author">Michele Marchioro</dd>
+					<dt class="editor">Casa editrice</dt>
+						<dd class="editor">Mondadori</dd>
+					<dt class="pubdate">Anno pubblicazione</dt>
+						<dd class="pubdate">2022</dd>
+					<dt class="price">Prezzo</dt>
+						<dd class="price">&euro; 123,99 (IVA incl.)</dd>
+					<dt class="rating">Valutazione</dt>
+						<dd class="rating"><span class="val_5">Ottimo</span></dd>
+						<!--
+							Numero di stelline visualizzato tramite CSS tramite class 
+							val_1 => Pessimo
+							val_2 => Brutto
+							val_3 => Neutro
+							val_4 => Bello
+							val_5 => Ottimo
+						-->
+				</dl>
+				<a role="button" href="/cart/add/<id_libro>">Aggiungi al carrello</a>
+				<a role="button" href="">Maggiori informazioni</a>
+				<!-- TODO questi due a button, li mettiamo dentro dei tag p? -->
+			</article>
+		</section>
+
+		<aside>
+			<form method="post" action="" id="form_search">
+				<fieldset>
+					<legend>Ricerca nel catalogo</legend>
+
+					<label for="search_text" class="hideable">Testo da cercare:</label>
+					<input type="text" name="search_text" id="search_text">
+					<input type="submit" name="CMD_Search" value="Cerca">
+				</fieldset>
+			</form>
+		</aside>
+	</main>
+
+	<footer role="contentinfo">
+		<p>Progetto realizzato per il corso Tecnologie Web a.a. 2022-2023 da:</p>
+		<address> <!-- Elemento semantico destinato anche a qualificare le informazioni di contatto degli autori -->
+			<a href="mailto:alberto.casadomoreno@studenti.unipd.it" rel="author">Alberto Casado Moreno</a>
+			<a href="mailto:gabriele.saracco@studenti.unipd.it" rel="author">Gabriele Saracco</a>
+			<a href="mailto:matteo.baggio.5@studenti.unipd.it" rel="author">Matteo Baggio</a>
+			<a href="mailto:michele.marchioro.1@studenti.unipd.it" rel="author">Michele Marchioro</a>
+			<!-- TODO dubbi: mettere un elenco UL oppure no? -->
+		</address>
+	</footer>
+  </body>
