@@ -1,0 +1,5 @@
+#Simple Robots.txt 0.1
+User-agent: MSNBot
+Crawl-delay: 5
+User-agent: bingbot
+Crawl-delay: 5

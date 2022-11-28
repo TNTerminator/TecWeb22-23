@@ -1,0 +1,32 @@
+/*
+#222222 --> Colore primario: blu scuro
+#585858 --> Colore secondario: blu chiaro
+#676767 --> Colore evidenza: rosso
+#000000 --> Colore testo: nero
+#ffffff --> Colore testo in negativo: bianco
+*/
+
+body > header,
+body > header > h1 > span
+{
+	background-color: #222222;
+	color: #ffffff;
+}
+
+nav#breadcrumbs
+{
+	background-color: #585858;
+	color: #ffffff;
+}
+
+nav[role=navigation]
+{
+	background-color: #222222;
+	color: #ffffff;
+}
+
+body > footer
+{
+	background-color: #585858;
+	color: #ffffff;
+}

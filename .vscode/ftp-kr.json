@@ -1,0 +1,18 @@
+{
+    "host": "ftp.marvago.com",
+    "username": "elibrary@elibrary.marvago.com",
+    "password": "elibrary2022",
+    "remotePath": "/",
+    "protocol": "ftp",
+    "port": 0,
+    "fileNameEncoding": "utf8",
+    "autoUpload": true,
+    "autoDelete": true,
+    "autoDownload": true,
+    "ignore": [
+        ".git",
+        "/.vscode",
+		"/elibrary_temp"
+    ],
+	"localBasePath": "elibrary"
+}

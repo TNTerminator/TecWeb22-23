@@ -1,0 +1,43 @@
+{
+  "ftp://ftp.marvago.com@elibrary@elibrary.marvago.com": {
+    ".ftpquota": {
+      "type": "-",
+      "size": 4,
+      "lmtime": 0,
+      "modified": false
+    },
+    ".htaccess": {
+      "type": "-",
+      "size": 116,
+      "lmtime": 0,
+      "modified": false
+    },
+    ".well-known": {},
+    "cgi-bin": {},
+    "controllers": {},
+    "error_log": {
+      "type": "-",
+      "size": 27944,
+      "lmtime": 0,
+      "modified": false
+    },
+    "includes": {},
+    "index.php": {
+      "type": "-",
+      "size": 2364,
+      "lmtime": 0,
+      "modified": false
+    },
+    "js": {},
+    "media": {},
+    "models": {},
+    "robots.txt": {
+      "type": "-",
+      "size": 92,
+      "lmtime": 0,
+      "modified": false
+    },
+    "views": {}
+  },
+  "$version": 1
+}

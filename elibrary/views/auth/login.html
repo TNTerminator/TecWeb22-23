@@ -1,0 +1,27 @@
+<h3>Accesso ai propri servizi</h3>
+<form method="post" action="##-View::FormAction-##" id="login-form">
+	<fieldset>
+		<legend>Dati di accesso</legend>
+
+		<div class="field">
+			<label for="username">Username</label>
+			<span class="field_hint">Inserire il proprio username o l'indirizzo email</span>
+			<input type="text" name="username" id="username" value="##-Post::username-##" required>
+			##-FieldError::username-##
+		</div>
+
+		<div class="field">
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" required="required">
+			##-FieldError::password-##
+		</div>
+	</fieldset>
+
+	<input type="submit" name="CMD_Login" value="Accedi">
+</form>
+<hr class="interruption" />
+<p>Non hai ancora un account? <a href="/auth/register/">Registrati cliccando qui!</a></p>
+<p>Hai problemi di accesso? <a href="mailto:michele.marchioro.1@studenti.unipd.it">Clicca qui per supporto!</a></p>
+<script type="text/javascript">
+document.forms["login-form"].addEventListener("submit", checkLoginForm);
+</script>

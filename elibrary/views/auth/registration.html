@@ -1,0 +1,94 @@
+<h3>Registra il tuo account ##-Global::PROJECT_TITLE-##</h3>
+<form method="post" action="##-View::FormAction-##" id="registration-form">
+	<p>Per registrarti al sito ##-Global::PROJECT_TITLE-##, compila il seguente form in ogni sua parte.</p>
+	##-View::Messages-##
+	<fieldset>
+		<legend>Profilo utente</legend>
+
+		<div>
+			<label for="username"><span lang="en">Username (obbligatorio)</span></label>
+			<input type="text" name="username" id="username" maxlength="20" minlength="8" value="##-Post::username-##" required />
+			<p class="field_instructions">Lo <span lang="en">Username</span> deve essere lungo almeno 8 caratteri e non più di 20.</p>
+			<!-- TODO da eliminare? non combacia con gli utenti predefiniti richiesti
+			<br>Lo <span lang="en">Username</span> deve iniziare con una lettera e pu&ograve; contenere solamente caratteri alfanumerici.
+			-->
+			##-FieldError::username-##
+		</div>
+
+		<div>
+			<label for="password"><span lang="en">Password (obbligatorio)</span></label>
+			<input type="password" name="password" id="password" maxlength="16" minlength="8" required />
+			<p class="field_instructions">La <span lang="en">Password</span> deve essere lunga almeno 8 caratteri e non più di 16.<br>
+			Inoltre deve contenere almeno una lettera minuscola, una maiuscola e un numero.</p>
+			##-FieldError::password-##
+		</div>
+
+		<div>
+			<label for="confermapassword"><span lang="en">Conferma password (obbligatorio)</span></label>
+			<input type="password" name="confermapassword" id="confermapassword" maxlength="16" minlength="8" required />
+			<p class="field_instructions">Ridigita la stessa <span lang="en">password</span> usata nel campo <span lang="en">Password</span> a titolo precauzionale; entrambe le <span lang="en">password</span> devono coincidere.</p>
+			##-FieldError::confermapassword-##
+		</div>
+
+		<div>
+			<label for="email"><span lang="en">Email (obbligatorio)</span></label>
+			<input type="email" name="email" id="email" value="##-Post::email-##" required>
+			##-FieldError::email-##
+		</div>
+
+		<div>
+			<label for="name">Nome (obbligatorio)</label>
+			<input type="text" name="name" id="name" value="##-Post::name-##" required />
+			<p class="field_instructions">Inserire il proprio Nome.</p>
+			##-FieldError::name-##
+		</div>
+
+		<div>
+			<label for="surname">Cognome (obbligatorio)</label>
+			<input type="text" name="surname" id="surname" value="##-Post::surname-##" required />
+			<p class="field_instructions">Inserire il proprio Cognome.</p>
+			##-FieldError::surname-##
+		</div>
+
+		<div>
+			<label for="birthdate">Data di nascita (obbligatorio)</label>
+			<input type="date" name="birthdate" id="birthdate" value="##-Post::birthdate-##" required>
+			<p class="field_instructions">La data di nascita deve essere inserita nel formato GG-MM-AAAA, ovvero due cifre per il giorno, due cifre per il mese e quattro cifre per l'anno.</p>
+			##-FieldError::birthdate-##
+		</div>
+
+		<div>
+			<label for="additionalinfo">Descrivi il posto dove preferisci leggere (obbligatorio)</label>
+			<textarea name="additionalinfo" id="additionalinfo">##-Post::additionalinfo-##</textarea>
+			<p class="field_instructions">Descrivi il luogo in cui preferisci goderti la lettura dei tuoi libri, e come lo vivi.Inserisci un testo di almeno 10 caratteri.</p>
+			##-FieldError::additionalinfo-##
+			<p class="field_error"></p>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Informativa sul trattamento dei dati personali</legend>
+
+		<div>
+			<div class="informativa_privacy">
+				<!-- Testo dell'informativa della privacy -->
+			</div>
+			<input type="checkbox" name="privacy_agreement" id="privacy_agreement" value="1" required>
+			<label for="privacy_agreement">Dichiaro di aver letto l'informativa sul trattamento dei dati personali (obbligatorio)</label>
+			##-FieldError::privacy_agreement-##
+		</div>
+
+		<div>
+			Accetti di ricevere una <span lang="en">newsletter</span> sulle nostre novità, promozioni e iniziative?
+			<input type="radio" name="marketing_agreement" id="marketing_agreement_no" value="0" checked>
+			<label for="marketing_agreement_no">No, rifiuto.</label>
+			<input type="radio" name="marketing_agreement" id="marketing_agreement_yes" value="1">
+			<label for="marketing_agreement_yes">Si, accetto.</label>
+		</div>
+	</fieldset>
+	
+	<input type="submit" name="CMD_Register" value="Registrati">
+</form>
+<script type="text/javascript">
+	document.forms["registration-form"].addEventListener("submit", checkRegistrationForm);
+</script>
