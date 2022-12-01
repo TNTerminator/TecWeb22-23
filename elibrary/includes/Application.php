@@ -19,6 +19,7 @@ require_once("models/Book.php");
 require_once("models/Category.php");
 require_once("models/Order.php");
 require_once("models/User.php");
+require_once("controllers/AdminController.php");
 require_once("controllers/AuthController.php");
 require_once("controllers/AuthorsController.php");
 require_once("controllers/BooksController.php");
@@ -27,6 +28,7 @@ require_once("controllers/ErrorController.php");
 require_once("controllers/FrontController.php");
 require_once("controllers/IndexController.php");
 require_once("controllers/OrdersController.php");
+require_once("controllers/ProfileController.php");
 require_once("controllers/UsersController.php");
 
 class Application

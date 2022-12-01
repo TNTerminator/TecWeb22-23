@@ -40,6 +40,10 @@ body > header > h1 > span
 	background-repeat: no-repeat;
 }
 
+nav#breadcrumbs
+{
+	padding:0.3em;
+}
 nav#breadcrumbs ol
 {
 	margin: 0;
@@ -57,13 +61,13 @@ nav#breadcrumbs ol li:not(:last-child)::after
 	content: "»";
 }
 
-nav[role=navigation]
+nav#mainmenu
 {
 	float: left;
 	width: 18em;
 }
-nav[role=navigation] ol,
-nav[role=navigation] ul
+nav#mainmenu ol,
+nav#mainmenu ul
 {
 	margin: 0;
 }

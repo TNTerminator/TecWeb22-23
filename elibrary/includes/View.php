@@ -595,61 +595,8 @@ class View
 
 	public function getMenu($menuid)
 	{
-		switch($menuid)
-		{
-			/* TODO case "adminmenu":
-				return $this->getAdminMenu();
-				break;
-
-			case "usermenu":
-				return $this->getUserMenu();
-				break;*/
-
-			default:
-				return $this->getMainMenu();
-		}
+		return $this->getMainMenu();
 	}
-
-	/*public function getAdminMenu()
-	{
-		$html = "";
-		if(AuthController::isLogged())
-		{
-			$user = unserialize($_SESSION["LoggedUser"]);
-			if($user->getType() == UserProfile::TYPE_ADMIN)
-			{
-				$html = "<nav id=\"adminmenu\" class=\"sd-full md-full\">
-				Menu amministrazione sito:
-				<ol>";
-				$html .= "<li><a href=\"" . BASE_DIR . "/admin/index/\">Amministrazione</a></li>";
-				$html .= "<li><a href=\"" . BASE_DIR . "/admin/eventi/\">Lista eventi</a></li>";
-				$html .= "<li><a href=\"" . BASE_DIR . "/admin/nuovoevento/\">Aggiungi nuovo evento</a></li>";
-				$html .= "</ol> 
-				</nav>";
-			}
-		}
-		return $html;	
-	}*/
-
-	/*public function getUserMenu()
-	{
-		$html = "<nav id=\"usermenu\" class=\"sd-full md-full\">	
-		<ol>";
-		if(AuthController::isLogged())
-		{
-			$user = unserialize($_SESSION["LoggedUser"]);
-			$html .= "<li><a href=\"" . BASE_DIR . "/profile/\">Profilo utente</a></li>";
-			$html .= "<li><a href=\"" . BASE_DIR . "/car/\">Scheda auto</a></li>";
-			$html .= "<li><a href=\"" . BASE_DIR . "/auth/logout/\">Esci</a></li>";
-		}else
-		{
-			$html .= "<li><a href=\"" . BASE_DIR . "/auth/login/\">Accedi</a></li>
-			<li><a href=\"" . BASE_DIR . "/auth/register/\">Registrati</a></li>";
-		}
-		$html .= "</ol> 
-		</nav>";
-		return $html;	
-	}*/
 
 	public function getMainMenu()
 	{
@@ -658,25 +605,35 @@ class View
 		https://www.w3.org/WAI/tutorials/menus/
 		*/
 
-		/* TODO
-		<!-- Usiamo un class, anzinché un id, per qualificare l'elemento che rappresenta la pagina corrente, in quanto potrebbero esistere più elementi con questa funzione. --> */
 		$html = "<nav role=\"navigation\" id=\"mainmenu\" aria-labelledby=\"menu_heading\">
 			<h2 id=\"menu_heading\" class=\"hideable\">Menu</h2>
-			<ol>" .
-			$this->getMenuItemByController("<span lang=\"en\">Home</span>", "index", "home") .
-			$this->getMenuItemByController("Chi siamo", "index", "chisiamo");
-		$html .= $this->renderCategoriesMenu();
-		if(AuthController::isLogged())
+			<ol>";
+
+		if(AuthController::isAdmin())
 		{
-			$html .= "<li><a href=\"" . FrontController::getUrl("profile", "cart", null) . "\">Carrello</a></li>
-			<li><a href=\"" . FrontController::getUrl("profile", "index", null) . "\">Profilo</a></li>
-			<li><a href=\"" . FrontController::getUrl("profile", "mylibrary", null) . "\">I miei acquisti</a></li>
-			<li><a href=\"" . FrontController::getUrl("auth", "logout", null) . "\">Logout</a></li>";
+			$html .= $this->getMenuItemByController("Profilo", "profile", "index");
+			$html .= $this->getMenuItemByController("Gestione categorie", "categories", "list");
+			$html .= $this->getMenuItemByController("Gestione autori", "authors", "list");
+			$html .= $this->getMenuItemByController("Gestione libri", "books", "list");
+			$html .= $this->getMenuItemByController("Logout", "auth", "logout");
 		}else
 		{
-			$html .= "<li><a href=\"" . FrontController::getUrl("auth", "login", null) . "\">Accedi</a></li>
-			<li><a href=\"" . FrontController::getUrl("auth", "register", null) . "\">Registrati</a></li>";
+			$html .= $this->getMenuItemByController("<span lang=\"en\">Home</span>", "index", "home");
+			$html .= $this->getMenuItemByController("Chi siamo", "index", "chisiamo");
+			$html .= $this->renderCategoriesMenu();
+			if(AuthController::isLogged())
+			{
+				$html .= $this->getMenuItemByController("Carrello", "profile", "cart");
+				$html .= $this->getMenuItemByController("Profilo", "profile", "index");
+				$html .= $this->getMenuItemByController("I miei acquisti", "profile", "mylibrary");
+				$html .= $this->getMenuItemByController("Logout", "auth", "logout");
+			}else
+			{
+				$html .= $this->getMenuItemByController("Accedi", "auth", "login");
+				$html .= $this->getMenuItemByController("Registrati", "auth", "register");
+			}
 		}
+
 		$html .= "</ol> 
 		</nav>";
 		return $html;

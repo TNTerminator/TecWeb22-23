@@ -1,0 +1,14 @@
+<form method="post" action="##-View::FormAction-##" id="categories-add-form">
+	<p>Categoria madre: ##-Dict::mothername-##</p>
+
+	<div class="field">
+		<label for="name">Nome categoria</label>
+		<input type="text" name="name" id="name" value="##-Dict::Name-##" required>
+		##-FieldError::name-##
+	</div>
+
+	<input type="submit" name="CMD_Execute" value="Salva modifiche">
+</form>
+<script type="text/javascript">
+document.forms["login-form"].addEventListener("submit", checkLoginForm);
+</script>

@@ -54,12 +54,49 @@ class DbManager
 		$this->Connection();
 	}
 
+	public function categorySelect($id)
+	{
+		$category = null;
+		if($id == null || $id <= 0)
+			return null;
+		
+		try
+		{
+			$stmt = $this->Connection()->prepare("SELECT * FROM categories WHERE IDCategory = ?");
+			$stmt->bind_param("i", $id);
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}
+		try
+		{
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0 && $catassoc = $result->fetch_assoc())
+			{
+				$category = new Category();
+				$category
+					->setId($catassoc["IDCategory"])
+					->setIdParentCategory($catassoc["IDParentCategory"])
+					->setName($catassoc["Name"]);
+			}
+			$result->close();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $category;
+	}
+
 	public function categorySave(Category $category)
 	{
 		if($category->getId() == null)
-			$this->categoryInsert($category);
+			return $this->categoryInsert($category);
 		else
-			$this->categoryUpdate($category);
+			return $this->categoryUpdate($category);
 	}
 
 	public function categoryInsert(Category $category)
@@ -86,7 +123,7 @@ class DbManager
 		{
 			@$stmt->bind_param("is", $category->getIdParentCategory(), $category->getName());
 			$stmt->execute();
-			$user->setId($this->Connection()->insert_id);
+			$category->setId($this->Connection()->insert_id);
 		}catch(mysqli_sql_exception $e)
 		{
 			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
@@ -94,6 +131,7 @@ class DbManager
 		{
 			$stmt->close();
 		}
+		return true;
 	}
 
 	public function categoryUpdate(Category $category)
@@ -120,13 +158,59 @@ class DbManager
 		{
 			@$stmt->bind_param("isi", $category->getIdParentCategory(), $category->getName(), $category->getId());
 			$stmt->execute();
-			$user->setId($this->Connection()->insert_id);
 		}catch(mysqli_sql_exception $e)
 		{
 			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
 		}finally
 		{
 			$stmt->close();
+		}
+		return true;
+	}
+
+	public function categoryDelete($id)
+	{
+		// Check if username or email already exists
+		if($id == null || $id <= 0)
+			return false;
+
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare(
+				"DELETE FROM categories WHERE IDCategory = ?"
+			);
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}
+		
+		try
+		{
+			@$stmt->bind_param("i", $id);
+			$stmt->execute();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return true;
+	}
+
+	public function categoryAncestry($category)
+	{
+		if($category == null)
+			return null;
+		else
+		{
+			$parentcategory = $this->categorySelect($category->getIdParentCategory());
+			$ancestry = $this->categoryAncestry($parentcategory);
+			if($ancestry == null)
+				$ancestry = array();
+			$ancestry[] = $category;
+			return $ancestry;
 		}
 	}
 
@@ -181,9 +265,9 @@ class DbManager
 	public function userSave(User $user)
 	{
 		if($user->getId() == null)
-			$this->userInsert($user);
+			return $this->userInsert($user);
 		else
-			$this->userUpdate($user);
+			return $this->userUpdate($user);
 	}
 
 	public function userInsert(User $user)
@@ -229,6 +313,7 @@ class DbManager
 		{
 			$stmt->close();
 		}
+		return true;
 	}
 
 	public function userUpdate(User $user)
@@ -265,6 +350,7 @@ class DbManager
 		{
 			$stmt->close();
 		}
+		return true;
 	}
 
 	public function userUpdateLastLogin(User $user)
@@ -462,9 +548,9 @@ class DbManager
 	public function bookSave(Book $book)
 	{
 		if($book->getId() == null)
-			$this->bookInser($book);
+			return $this->bookInser($book);
 		else
-			$this->bookUpdate($book);
+			return $this->bookUpdate($book);
 	}
 
 	public function bookInsert(Book $book)
@@ -496,7 +582,7 @@ class DbManager
 		{
 			@$stmt->bind_param("sisfss", $book->getTitle(), $book->getPubYear(), $book->getEditor(), $book->getPrice(), $book->getShortDescription(), $book->getDescription());
 			$stmt->execute();
-			$user->setId($this->Connection()->insert_id);
+			$book->setId($this->Connection()->insert_id);
 		}catch(mysqli_sql_exception $e)
 		{
 			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
@@ -504,6 +590,7 @@ class DbManager
 		{
 			$stmt->close();
 		}
+		return true;
 	}
 
 	public function bookUpdate(Book $book)
@@ -538,6 +625,7 @@ class DbManager
 		{
 			$stmt->close();
 		}
+		return true;
 	}
 
 	public function getUserById($id)
@@ -664,348 +752,4 @@ class DbManager
 		}
 		return $users;
 	}
-
-/*
-	public function saveEvento(Evento $evento)
-	{
-		if($evento->getId() == null)
-			$this->insertEvento($evento);
-		else
-			$this->updateEvento($evento);
-	}
-
-	public function insertEvento(Evento $evento)
-	{
-		// Check if username or email already exists
-		if($evento == null)
-			return false;
-
-		$stmt = null;
-		try
-		{
-			$stmt = $this->Connection()->prepare(
-				"INSERT INTO Raduno (" . 
-					"Nome," .
-					"Data," .
-					"Luogo," .
-					"Descrizione," . 
-					"QuotaIscrizione," .
-					"IDOrganizzatore," . 
-					"PhotoPath" .
-				") VALUES (?, ?, ?, ?, ?, ?, ?)"
-			);
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement insertEvento ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
-		}
-		
-		try
-		{
-			@$stmt->bind_param("ssssiis", $evento->getNome(), $evento->getData()->format("Y-m-d H:i"), $evento->getLuogo(), $evento->getDescrizione(), $evento->getQuotaIscrizione(), $evento->getIdOrganizzatore(), $evento->getPhotoPath());
-			$stmt->execute();
-			$evento->setId($this->Connection()->insert_id);
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement insertEvento ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
-		}finally
-		{
-			$stmt->close();
-		}
-	}
-
-	public function updateEvento(Evento $evento)
-	{
-		$stmt = null;
-		try
-		{
-			$stmt = $this->Connection()->prepare(
-				"UPDATE Raduno SET " .
-					"Nome = ?," .
-					"Data = ?," . 
-					"Luogo = ?," . 
-					"Descrizione = ?," .
-					"QuotaIscrizione = ?," .
-					"IDOrganizzatore = ?," .
-					"PhotoPath = ? " .
-				"WHERE ID = ?"
-			);
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement updateEvento ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
-		}
-		
-		try
-		{
-			@$stmt->bind_param("ssssiisi", $evento->getNome(), $evento->getData()->format("Y-m-d H:i"), $evento->getLuogo(), $evento->getDescrizione(), $evento->getQuotaIscrizione(), $evento->getIdOrganizzatore(), $evento->getPhotoPath(), $evento->getId());
-			$stmt->execute();
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement updateEvento ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
-		}finally
-		{
-			$stmt->close();
-		}
-	}
-
-	public function getEventById($id)
-	{
-		$evento = null;
-		$stmt = null;
-		try
-		{
-			$stmt = $this->Connection()->prepare("SELECT * FROM Raduno WHERE ID = ?");
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement getEventById ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
-		}		
-		try
-		{
-			$stmt->bind_param("i", $id);
-			$stmt->execute();
-			$result = $stmt->get_result();
-			if($result->num_rows > 0)
-			{
-				$row = $result->fetch_assoc();
-				$data = DateTime::createFromFormat("Y-m-d", $row["Data"]);
-				if ($data === false)
-					$data = null;
-
-				$evento = new Evento();
-				$evento
-					->setId($row["ID"])
-					->setNome($row["Nome"])
-					->setData($data)
-					->setLuogo($row["Luogo"])
-					->setDescrizione($row["Descrizione"])
-					->setQuotaIscrizione($row["QuotaIscrizione"])
-					->setIdOrganizzatore($row["IDOrganizzatore"])
-					->setPhotoPath($row["PhotoPath"])
-					->setOrganizzatore($this->getUserById($row["IDOrganizzatore"]));
-			}
-			$result->close();
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement getEventById ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
-		}finally
-		{
-			$stmt->close();
-		}
-		return $evento;
-	}
-
-	public function deleteEventById($id)
-	{
-		$evento = null;
-		$stmt = null;
-		try
-		{
-			$stmt = $this->Connection()->prepare("DELETE FROM Raduno WHERE ID = ?");
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement deleteEventById ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
-		}		
-		try
-		{
-			$stmt->bind_param("i", $id);
-			$result = $stmt->execute();
-			if($result === false)
-			{
-				throw new DbException("Il prepared statement deleteEventById ha fallito l'execute: " . htmlspecialchars($this->Connection()->error), DbException::ERR_QUERY, null);
-			}
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement deleteEventById ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
-		}catch(DbException $e)
-		{
-			throw $e;
-		}finally
-		{
-			$stmt->close();
-		}
-		return $evento;
-	}
-
-	public function getEvents()
-	{
-		$eventi = array();
-		$stmt = null;
-		try
-		{
-			$stmt = $this->Connection()->prepare("SELECT * FROM Raduno ORDER BY Data DESC");
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement getEvents ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
-		}		
-		try
-		{
-			$stmt->execute();
-			$result = $stmt->get_result();
-			while ($row = $result->fetch_assoc()) 
-			{
-				$data = DateTime::createFromFormat("Y-m-d", $row["Data"]);
-				if ($data === false)
-					$data = null;
-
-				$evento = new Evento();
-				$evento
-					->setId($row["ID"])
-					->setNome($row["Nome"])
-					->setData($data)
-					->setLuogo($row["Luogo"])
-					->setDescrizione($row["Descrizione"])
-					->setQuotaIscrizione($row["QuotaIscrizione"])
-					->setIdOrganizzatore($row["IDOrganizzatore"])
-					->setPhotoPath($row["PhotoPath"])
-					->setOrganizzatore($this->getUserById($row["IDOrganizzatore"]));
-				$eventi[] = $evento;
-			}
-			$result->close();
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement getCarByUser ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
-		}finally
-		{
-			$stmt->close();
-		}
-		return $eventi;
-	}
-
-	public function getFutureEvents()
-	{
-		$eventi = array();
-		$stmt = null;
-		try
-		{
-			$stmt = $this->Connection()->prepare("SELECT * FROM Raduno WHERE Data >= NOW() ORDER BY Data ASC");
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement getEvents ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
-		}		
-		try
-		{
-			$stmt->execute();
-			$result = $stmt->get_result();
-			while ($row = $result->fetch_assoc()) 
-			{
-				$data = DateTime::createFromFormat("Y-m-d", $row["Data"]);
-				if ($data === false)
-					$data = null;
-
-				$evento = new Evento();
-				$evento
-					->setId($row["ID"])
-					->setNome($row["Nome"])
-					->setData($data)
-					->setLuogo($row["Luogo"])
-					->setDescrizione($row["Descrizione"])
-					->setQuotaIscrizione($row["QuotaIscrizione"])
-					->setIdOrganizzatore($row["IDOrganizzatore"])
-					->setPhotoPath($row["PhotoPath"])
-					->setOrganizzatore($this->getUserById($row["IDOrganizzatore"]));
-				$eventi[] = $evento;
-			}
-			$result->close();
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement getCarByUser ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
-		}finally
-		{
-			$stmt->close();
-		}
-		return $eventi;
-	}
-
-	public function getCars()
-	{
-		$books = array();
-		
-		$stmt = null;
-		try
-		{
-			$stmt = $this->Connection()->prepare("SELECT * FROM Auto");
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement getCars ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
-		}		
-		try
-		{
-			$stmt->execute();
-			$result = $stmt->get_result();
-			while ($bookassoc = $result->fetch_assoc()) 
-			{
-				$book = new CarProfile();
-				$book
-					->setId($bookassoc["ID"])
-					->setMarca($bookassoc["Marca"])
-					->setModello($bookassoc["Modello"])
-					->setAnno($bookassoc["Anno"])
-					->setTarga($bookassoc["Targa"])
-					->setDescrizione($bookassoc["Descrizione"])
-					->setColore($bookassoc["Colore"])
-					->setAlimentazione($bookassoc["Alimentazione"])
-					->setCilindrata($bookassoc["Cilindrata"])
-					->setStorico($bookassoc["Storico"])
-					->setPhotoPath($bookassoc["PhotoPath"])
-					->setIdUtente($bookassoc["IDUtente"]);
-				$owner = $this->getUserById($book->getIdUtente());
-				$book->setOwner($owner);
-				$books[] = $book;
-			}
-			$result->close();
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement getCars ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
-		}finally
-		{
-			$stmt->close();
-		}
-		return $books;
-	}
-
-	public function getLastCars($nr_cars = 10)
-	{
-		$books = array();
-		
-		$stmt = null;
-		try
-		{
-			$stmt = $this->Connection()->prepare("SELECT * FROM Auto ORDER BY TsCreate DESC LIMIT 0," . $nr_cars);
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement getCars ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
-		}		
-		try
-		{
-			$stmt->execute();
-			$result = $stmt->get_result();
-			while ($bookassoc = $result->fetch_assoc()) 
-			{
-				$book = new CarProfile();
-				$book
-					->setId($bookassoc["ID"])
-					->setMarca($bookassoc["Marca"])
-					->setModello($bookassoc["Modello"])
-					->setAnno($bookassoc["Anno"])
-					->setTarga($bookassoc["Targa"])
-					->setDescrizione($bookassoc["Descrizione"])
-					->setColore($bookassoc["Colore"])
-					->setAlimentazione($bookassoc["Alimentazione"])
-					->setCilindrata($bookassoc["Cilindrata"])
-					->setStorico($bookassoc["Storico"])
-					->setPhotoPath($bookassoc["PhotoPath"])
-					->setIdUtente($bookassoc["IDUtente"]);
-				$owner = $this->getUserById($book->getIdUtente());
-				$book->setOwner($owner);
-				$books[] = $book;
-			}
-			$result->close();
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement getCars ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
-		}finally
-		{
-			$stmt->close();
-		}
-		return $books;
-	}*/
 }

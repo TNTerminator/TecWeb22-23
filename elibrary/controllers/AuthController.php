@@ -13,6 +13,17 @@ class AuthController
 		return isset($_SESSION["LoggedUser"]) && $_SESSION["LoggedUser"] != null; // && $_SESSION["LoggedUser"] instanceof UserProfile;
 	}
 
+	public static function isAdmin()
+	{
+		if(AuthController::isLogged())
+		{
+			$user = unserialize($_SESSION["LoggedUser"]);
+			if($user->getType() == User::TYPE_ADMIN)
+				return true;
+		}
+		return false;
+	}
+
 	public function loginAction($username, $password)
 	{
 		// Check if user already logged in
@@ -101,13 +112,13 @@ class AuthController
 					"field" => "username",
 					"message" => "Attenzione: Lo username &egrave; obbligatorio."
 				);
-			}else if(strlen($username) < 8 || strlen($username) > 20)
+			}else if(strlen($username) < 5 || strlen($username) > 20)
 			{
 				$errors[] = array(
 					"field" => "username",
 					"message" => "Attenzione: lo <span lang=\"en\">Username</span> non rispetta i requisiti di lunghezza."
 				);
-			}/*else if(!preg_match('/^[a-zA-Z]+[a-zA-Z0-9]+$/', $username))
+			}/* TODO else if(!preg_match('/^[a-zA-Z]+[a-zA-Z0-9]+$/', $username))
 			{
 				$errors[] = array(
 					"field" => "username",
@@ -153,7 +164,7 @@ class AuthController
 					"field" => "password",
 					"message" => "Attenzione: La password &egrave; obbligatoria."
 				);
-			}else if(strlen($password) < 8 || strlen($password) > 16)
+			}else if(strlen($password) < 5 || strlen($password) > 16)
 			{
 				$errors[] = array(
 					"field" => "password",

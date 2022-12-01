@@ -40,6 +40,7 @@ class IndexController
 		$page->setTemplate("main");
 		$page->setTitle("Chi siamo");
 		$page->setId("chisiamo");
+		$page->addBreadcrumb("Home", "/index/home/", "lang=\"en\"");
 		$page->addBreadcrumb("Chi siamo", null);
 		$page->setAuthors(Application::PROJECT_AUTHORS);
 		$page->setKeywords(""); // TODO

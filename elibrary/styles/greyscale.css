@@ -19,7 +19,7 @@ nav#breadcrumbs
 	color: #ffffff;
 }
 
-nav[role=navigation]
+nav#mainmenu
 {
 	background-color: #222222;
 	color: #ffffff;

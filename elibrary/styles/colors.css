@@ -5,6 +5,36 @@
 #000000 --> Colore testo: nero
 #ffffff --> Colore testo in negativo: bianco
 */
+:root
+{
+	--primarycolor: #00264b;
+	--secondarycolor: #0066cb;
+	--highlightcolor: #d55358;
+	--textcolor: #000000;
+	--inversetextcolor: #ffffff;
+}
+
+a,
+a:link
+{
+	
+}
+
+a:visited
+{
+
+}
+
+a:hover,
+a:focus
+{
+
+}
+
+a:active
+{
+
+}
 
 body > header,
 body > header > h1 > span
@@ -19,11 +49,12 @@ nav#breadcrumbs
 	color: #ffffff;
 }
 
-nav[role=navigation]
+nav#mainmenu
 {
 	background-color: #00264b;
 	color: #ffffff;
 }
+
 
 body > footer
 {

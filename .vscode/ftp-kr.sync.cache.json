@@ -1,5 +1,11 @@
 {
   "ftp://ftp.marvago.com@elibrary@elibrary.marvago.com": {
+    ".DS_Store": {
+      "type": "-",
+      "size": 6148,
+      "lmtime": 0,
+      "modified": false
+    },
     ".ftpquota": {
       "type": "-",
       "size": 4,
@@ -17,9 +23,9 @@
     "controllers": {},
     "error_log": {
       "type": "-",
-      "size": 27944,
+      "size": 31412,
       "lmtime": 0,
-      "modified": false
+      "modified": true
     },
     "includes": {},
     "index.php": {
@@ -37,6 +43,7 @@
       "lmtime": 0,
       "modified": false
     },
+    "styles": {},
     "views": {}
   },
   "$version": 1
