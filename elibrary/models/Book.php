@@ -31,6 +31,74 @@ class Book
 		return $this->_Title;
 	}
 
+	private $_IdAuthors = array();
+	public function addIdAuthor($id)
+	{
+		$IdAuthor = intval($id);
+		if($IdAuthor == 0)
+			$IdAuthor = null;
+		$this->_IdAuthors[] = $IdAuthor;
+		return $this;
+	}
+	public function addIdAuthors($array_of_id)
+	{
+		if(is_array($array_of_id))
+		{
+			foreach($array_of_id as $id)
+				$this->addIdAuthor($id);
+		}
+		return $this;
+	}
+	public function getIdAuthors()
+	{
+		return $this->_IdAuthors;
+	}
+	public function hasIdAuthor($id)
+	{
+		foreach($this->_IdAuthors as $idauthor)
+			if($idauthor == $id)
+				return true;
+		return false;
+	}
+	public function emptyIdAuthors()
+	{
+		$this->_IdAuthors = array();
+	}
+
+	private $_IdCategories = array();
+	public function addIdCategory($id)
+	{
+		$IdCategory = intval($id);
+		if($IdCategory == 0)
+			$IdCategory = null;
+		$this->_IdCategories[] = $IdCategory;
+		return $this;
+	}
+	public function addIdCategories($array_of_id)
+	{
+		if(is_array($array_of_id))
+		{
+			foreach($array_of_id as $id)
+				$this->addIdCategory($id);
+		}
+		return $this;
+	}
+	public function getIdCategories()
+	{
+		return $this->_IdCategories;
+	}
+	public function hasIdCategory($id)
+	{
+		foreach($this->_IdCategories as $idcategory)
+			if($idcategory == $id)
+				return true;
+		return false;
+	}
+	public function emptyIdCategories()
+	{
+		$this->_IdCategories = array();
+	}
+
 	private $_PubYear;
 	public function setPubYear($year)
 	{

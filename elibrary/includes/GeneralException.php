@@ -7,6 +7,9 @@
  */
 class GeneralException extends Exception
 {
+	public const ERR_GENERAL = 0;
+	public const ERR_SECURITY = 1;
+
     /**
 	 * Redefine the exception so message isn't optional
 	 */

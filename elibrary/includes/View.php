@@ -570,7 +570,7 @@ class View
 
 					case "Post":
 						if(isset($_POST[$variable[1]]))
-							$this->replaceMark($html, $mark, $_POST[$variable[1]]);
+							$this->replaceMark($html, $mark, Application::cleanInput($_POST[$variable[1]]));
 						else
 							$this->replaceMark($html, $mark, "");
 						break;
@@ -659,7 +659,7 @@ class View
 	{
 		$html = "";
 		if($parentcategory == null && !$hiderootitem)
-			$html .= "<li><a href=\"" . FrontController::getUrl("categories", "list", null) . "\">Categorie</a>";
+			$html .= "<li><a href=\"" . FrontController::getUrl("categories", "index", null) . "\">Categorie</a>";
 		$categories = FrontController::DbManager()->categoriesTree($parentcategory);
 		if(count($categories)>0)
 		{
@@ -667,9 +667,9 @@ class View
 			foreach($categories as $category)
 			{
 				$params = array();
-				$params["id"] = $category->getId();
+				$params["parentid"] = $category->getId(); // TODO verificare se è id o parentid
 				$childs_categories = $this->renderCategoriesMenu($category->getId(), true);
-				$html .= $this->getMenuItemByController($category->getName(), "books", "category", $params, $childs_categories);
+				$html .= $this->getMenuItemByController($category->getName(), "categories", "index", $params, $childs_categories);
 			}
 			$html .= "</ul>";
 		}

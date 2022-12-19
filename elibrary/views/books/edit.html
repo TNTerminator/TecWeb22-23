@@ -1,0 +1,71 @@
+<h3>Modifica la scheda del libro ##-Dict::book_title-##</h3>
+<p><a href="##-Dict::backToListLink-##">Torna indietro</a> all'elenco delle schede libro</p>
+<form method="post" action="##-View::FormAction-##" id="books-add-form">
+	##-View::Messages-##
+	<fieldset>
+		<legend>Scheda libro</legend>
+
+		<div class="field">
+			<label for="title">Titolo</label>
+			<input type="text" name="title" id="title" value="##-Dict::title-##" required>
+			##-FieldError::title-##
+		</div>
+
+		<div class="field">
+			<label for="idauthor">Autore</label>
+			<select name="idauthor">
+				<option>Selezionare un autore dall'elenco...</option>
+				##-Dict::AuthorOptions-##
+			</select>
+			##-FieldError::idauthor-##
+		</div>
+
+		<div class="field">
+			<label for="idcategory">Categoria</label>
+			<select name="idcategory">
+				<option>Selezionare una categoria dall'elenco...</option>
+				##-Dict::CategoryOptions-##
+			</select>
+			##-FieldError::idcategory-##
+		</div>
+
+		<div class="field">
+			<label for="pubyear">Anno di pubblicazione</label>
+			<input type="number" name="pubyear" id="pubyear" value="##-Dict::pubyear-##" required>
+			##-FieldError::pubyear-##
+		</div>
+
+		<div class="field">
+			<label for="editor">Editore</label>
+			<input type="text" name="editor" id="editor" value="##-Dict::editor-##" required>
+			##-FieldError::editor-##
+		</div>
+
+		<div class="field">
+			<label for="price">Prezzo</label>
+			&euro; <input type="text" name="price" id="price" value="##-Dict::price-##" required>
+			<p class="field_instructions">Il Prezzo deve essere inserito solamente con cifre, usando la virgola come carattere separatore per i decimali.</p>
+			##-FieldError::price-##
+		</div>
+
+		<div class="field">
+			<label for="shortdescription">Descrizione breve</label>
+			<input type="text" name="shortdescription" id="shortdescription" value="##-Dict::shortdescription-##" required>
+			<p class="field_instructions">La Descrizione breve è un testo minimale, lungo al massimo 100 caratteri, che compare quando il libro viene visualizzato in un elenco di ricerca.</p>
+			##-FieldError::shortdescription-##
+		</div>
+
+		<div class="field">
+			<label for="description">Descrizione estesa</label>
+			<textarea name="description" id="description">##-Dict::description-##</textarea>
+			<p class="field_instructions">La Descrizione estesa è un testo ampio che descrive il libro ed il suo contenuto e viene visualizzato all'interno della scheda di dettaglio del libro.</p>
+			##-FieldError::description-##
+		</div>
+	</fieldset>
+
+	<input type="submit" name="CMD_Execute" value="Modifica scheda libro">
+</form>
+<p><a href="##-Dict::backToListLink-##">Torna indietro</a> all'elenco delle schede libro</p>
+<script type="text/javascript">
+document.forms["login-form"].addEventListener("submit", checkLoginForm);
+</script>

@@ -72,4 +72,29 @@ class Application
 		if(DEBUG_MODE == $debugmode)
 			echo "<div>" . $warning . "</div>";
 	}
+
+	public static function cleanInput($value, $clearHtml = true)
+	{
+		$value = trim($value);
+		if($clearHtml)
+			$value = strip_tags($value);
+		$value = htmlentities($value);
+		$value = str_replace("#", "&num;", $value);
+		return $value;
+	}
+
+	public static function stringToFloat($str)
+	{
+		return floatval(str_replace(",", ".", $str));
+	}
+
+	public static function floatToString($float)
+	{
+		return number_format($float, 2, ",", "");
+	}
+
+	public static function priceToString($price)
+	{
+		return "&euro; " . self::floatToString($price);
+	}
 }

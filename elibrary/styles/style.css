@@ -61,29 +61,115 @@ nav#breadcrumbs ol li:not(:last-child)::after
 	content: "»";
 }
 
-nav#mainmenu
-{
-	float: left;
-	width: 18em;
-}
 nav#mainmenu ol,
 nav#mainmenu ul
 {
 	margin: 0;
 }
 
-main
+main,
+footer
 {
-	margin-left: 18em;
 	padding-left: 1em;
 	padding-right: 1em;
 }
 
-body > footer
+footer
 {
-	clear: left;
+	background-image: url(https://www.unipd.it/sites/unipd.it/themes/unipd_2017/img/logo-UNIPD-white.png);
+	background-repeat: no-repeat;
+	background-position: 1em 1em;
+	min-height: calc(110px + 2em);
 }
-body > footer p
+
+
+@media only screen and (max-width: 600px) 
 {
-	margin: 0;
+	nav#mainmenu ol
+	{
+		list-style: none;
+		padding:0;
+	}
+	nav#mainmenu ol ul
+	{
+		display: none;
+	}
+	nav#mainmenu ol > li
+	{
+		text-transform: uppercase;
+		padding: 0.2em;
+		text-align: center;
+		font-size: 1.4em;
+		border-bottom: 1px solid #fff;
+	}
+	nav#mainmenu ol > li > a,
+	nav#mainmenu ol > li > a:link
+	{
+		border-left:0.5em solid transparent;
+		border-right:0.5em solid transparent;
+		display: block;
+		padding: 0.3em;
+	}
+	nav#mainmenu ol > li.current_page > a,
+	nav#mainmenu ol > li.current_page > a:link
+	{
+		border-left:0.5em solid #ffffff;
+		text-decoration-color: #ffffff;
+	}
+	nav#mainmenu ol > li > a:hover,
+	nav#mainmenu ol > li > a:focus
+	{
+		border-left:0.5em solid #d55358;
+		text-decoration-color: #d55358;
+	}
+	nav#breadcrumbs ol > li > a:hover,
+	nav#breadcrumbs ol > li > a:focus
+	{
+		color:#d55358;
+		text-decoration-color: #d55358;
+	}
+
+	footer
+	{
+		padding-top: calc(110px + 1em);
+	}
+	footer p
+	{
+		margin-top:1em;
+		padding-top:1em;
+		border-top:1px solid #ffffff;
+	}
+}
+
+@media only screen and (min-width: 600px) 
+{
+	nav#mainmenu
+	{
+		float: left;
+		width: 18em;
+	}
+
+	main
+	{
+		margin-left: 18em;
+	}
+
+	body > footer
+	{
+		clear: left;
+	}
+
+	footer
+	{
+		padding-left: calc(234px + 1em);
+		position: relative;
+	}
+	footer > p
+	{
+		position:absolute;
+		top:50%;
+		margin: -1em 0 0 2em;
+		padding:0 0 0 2em;
+		border-left: 1px solid #ffffff;
+	}
 }

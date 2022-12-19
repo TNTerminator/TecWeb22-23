@@ -8,8 +8,103 @@
 
 class CategoriesController
 {
-	public function indexAction()
+	public function indexAction($parentid = null)
 	{
+		$page = new View();
+		$page->setName("cat_list");
+		$page->setPath("categories/index.html");
+		$page->setTemplate("main");
+		$page->setTitle("Categorie");
+		$page->setId("categories_list");
+
+		$mothercategory = FrontController::DbManager()->categorySelect($parentid);
+		$mcancestry = FrontController::DbManager()->categoryAncestry($mothercategory);
+		$categories = FrontController::DbManager()->categoriesTree($parentid);
+
+		if($parentid == null)
+			$page->addBreadcrumb("Categorie", null, null);
+		else
+		{
+			$page->addBreadcrumb("Categorie", "/categories/index/", null);
+			for($i=0; $i<count($mcancestry); $i++)
+			{
+				if($i<count($mcancestry)-1)
+					$page->addBreadcrumb($mcancestry[$i]->getName(), "/categories/list/parentid/" . $mcancestry[$i]->getId() . "/", null);
+				else
+					$page->addBreadcrumb($mcancestry[$i]->getName(), null, null);
+			}
+		}
+		
+		if($mothercategory != null)
+		{
+			$page->addDictionary("category_caption", "Categoria: " . $mothercategory->getName());
+		}
+		else
+		{
+			$page->addDictionary("category_caption", "Elenco categorie");
+		}
+
+		$html = "";
+		if($mothercategory != null)
+		{
+			$params = array();
+			$motherpid = $mothercategory->getIdParentCategory();
+			if($motherpid != null)
+				$params["parentid"] = $motherpid;
+			$html .= "<p><a href=\"" . FrontController::getUrl("categories", "index", $params) . "\">Torna all'elenco categorie di livello superiore</a>.</p>";
+		}
+		$page->AddDictionary("UpOneLevel", $html);
+		if(count($categories) == 0)
+		{
+			$page->AddDictionary("CategoriesList", "");
+		}
+		else
+		{
+			$html = "<section>";
+			if($mothercategory != null)
+				$html .= "<h3>Elenco delle sotto-categorie</h3>";
+			else
+				$html .= ""; //"<h3>Elenco delle categorie</h3>";
+			$html .= "<ul>";
+			foreach($categories as $category)
+			{
+				$params = array();
+				$params["parentid"] = $category->getId();
+				$html .= "<li><a href=\"" . FrontController::getUrl("categories", "index", $params) . "\">" . $category->getName() . "</a></li>";
+			}
+			$html .= "</ul>";
+			$html .= "</section>";
+			$page->AddDictionary("CategoriesList", $html);
+		}
+
+		if($mothercategory != null)
+		{
+			$books = FrontController::DbManager()->getBooksByCategory($parentid);
+			$html = "<section>";
+			$html .= "<h3>Libri presenti in questa categoria</h3>";
+			if(count($books) > 0)
+			{
+				$html .= "<ul>";
+				foreach($books as $book)
+				{
+					/*$params = array();
+					$params["parentid"] = $category->getId();*/
+					$html .= "<li>" . $book->getTitle() . "</a><li>";
+				}
+				$html .= "</ul>";
+			}else
+			{
+				$html .= "<p>In questa categoria, al momento, non ci sono libri disponibili.</p>";
+			}
+			$html .= "</section>";
+			$page->addDictionary("BooksList", $html);
+		}
+		else
+		{
+			$page->addDictionary("BooksList", "");
+		}
+
+		$page->render();
 	}
 
 	public function listAction($parentid = null)
@@ -28,7 +123,7 @@ class CategoriesController
 		$mcancestry = FrontController::DbManager()->categoryAncestry($mothercategory);
 		$categories = FrontController::DbManager()->categoriesTree($parentid);
 
-		$page->addBreadcrumb("Amministrazione sito", "/admin/index", null);
+		$page->addBreadcrumb("Amministrazione sito", "/admin/index/", null);
 		if($mcancestry == null)
 			$page->addBreadcrumb("Gestione categorie", null, null);
 		else
@@ -101,7 +196,7 @@ class CategoriesController
 		if(isset($_POST["CMD_Execute"]))
 		{
 			// Postback management
-			$name = trim($_POST["name"]);
+			$name = Application::cleanInput($_POST["name"]);
 			if($name == "")
 			{
 				$errors[] = array(
@@ -174,7 +269,7 @@ class CategoriesController
 		if(isset($_POST["CMD_Execute"]))
 		{
 			// Postback management
-			$name = trim($_POST["name"]);
+			$name = Application::cleanInput($_POST["name"]);
 			if($name == "")
 			{
 				$errors[] = array(

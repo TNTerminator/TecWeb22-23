@@ -41,13 +41,5 @@ function substr_with_delimiters($source, $start_delimiter, $end_delimiter)
 }
 
 
-function cleanInput($value, $clearHtml = true)
-{
-	$value = trim($value);
-	if($clearHtml)
-		$value = strip_tags($value);
-	$value = htmlentities($value);
-	return $value;
-}
 
 

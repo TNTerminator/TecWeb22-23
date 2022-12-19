@@ -17,18 +17,45 @@
 a,
 a:link
 {
-	
+	color: #3333FF; /* WEB SAFE COLORS https://www.w3.org/TR/2008/NOTE-WCAG20-TECHS-20081211/working-examples/G183/link-contrast.html */
+}
+nav#breadcrumbs a,
+nav#breadcrumbs a:link,
+nav#mainmenu a,
+nav#mainmenu a:link
+{
+	color: #ffffff;
+}
+nav#mainmenu a,
+nav#mainmenu a:link
+{
+	text-decoration: none;
 }
 
 a:visited
 {
-
+	color: #9900FF;/* WEB SAFE COLORS https://www.w3.org/TR/2008/NOTE-WCAG20-TECHS-20081211/working-examples/G183/link-contrast.html */
+}
+nav#breadcrumbs a:visited
+{
+	color: #ffffff;
+}
+nav#mainmenu a:visited
+{
+	color: #ffffff;
 }
 
-a:hover,
-a:focus
+main a:hover,
+main a:focus
 {
-
+	background-color:blanchedalmond;
+	/*border-top: 1px solid #3333FF;*/
+	text-decoration-style: double;
+}
+nav#mainmenu a:hover,
+nav#mainmenu a:focus
+{
+	text-decoration: underline;
 }
 
 a:active

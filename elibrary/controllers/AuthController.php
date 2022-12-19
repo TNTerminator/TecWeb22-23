@@ -35,7 +35,7 @@ class AuthController
 
 		if(isset($_POST["CMD_Login"]))
 		{
-			$username = cleanInput($_POST["username"]);
+			$username = Application::cleanInput($_POST["username"]);
 			if($username == "")
 			{
 				$errors[] = array(
@@ -44,7 +44,7 @@ class AuthController
 				);
 			}
 
-			$password = cleanInput($_POST["password"]);
+			$password = Application::cleanInput($_POST["password"]);
 			if($password == "")
 			{
 				$errors[] = array(
@@ -99,13 +99,24 @@ class AuthController
 
 	public function registerAction()
 	{
+		// First page load
+		$page = new View();
+		$page->setName("registration");
+		$page->setPath("auth/registration.html");
+		$page->setTemplate("main");
+		$page->setTitle("Registra il tuo account " . Application::PROJECT_TITLE);
+		$page->setId("registration");
+		$page->setFormAction("/auth/register/");
+		$page->addBreadcrumb("Home", "/home/", "lang=\"en\"");
+		$page->addBreadcrumb("Registrazione nuovo account", null);
+
 		// Form validation
 		$errors = array();
 
 		if(isset($_POST["CMD_Register"]))
 		{
 			// Postback management
-			$username = trim($_POST["username"]);
+			$username = Application::cleanInput($_POST["username"]);
 			if($username == "")
 			{
 				$errors[] = array(
@@ -118,13 +129,13 @@ class AuthController
 					"field" => "username",
 					"message" => "Attenzione: lo <span lang=\"en\">Username</span> non rispetta i requisiti di lunghezza."
 				);
-			}/* TODO else if(!preg_match('/^[a-zA-Z]+[a-zA-Z0-9]+$/', $username))
+			}else if(!preg_match('/^[a-zA-Z]+[a-zA-Z0-9]+$/', $username))
 			{
 				$errors[] = array(
 					"field" => "username",
 					"message" => "Attenzione: Lo username deve iniziare con una lettera e pu&ograve; contenere solamente caratteri alfanumerici."
 				);
-			}*/else if(FrontController::DbManager()->checkUsernameExists($username))
+			}else if(FrontController::DbManager()->checkUsernameExists($username))
 			{
 				$errors[] = array(
 					"field" => "username",
@@ -132,7 +143,7 @@ class AuthController
 				);
 			}
 
-			$email_raw = trim($_POST["email"]);
+			$email_raw = Application::cleanInput($_POST["email"]);
 			if($email_raw == "")
 			{
 				$errors[] = array(
@@ -157,7 +168,7 @@ class AuthController
 				}
 			}
 			
-			$password = trim($_POST["password"]);
+			$password = Application::cleanInput($_POST["password"]);
 			if($password == "")
 			{
 				$errors[] = array(
@@ -172,7 +183,7 @@ class AuthController
 				);
 			}
 
-			$confermapassword = trim($_POST["confermapassword"]);
+			$confermapassword = Application::cleanInput($_POST["confermapassword"]);
 			if($confermapassword != $password)
 			{
 				$errors[] = array(
@@ -181,25 +192,37 @@ class AuthController
 				);
 			}
 
-			$nome = htmlentities(trim($_POST["name"]));
+			$nome = Application::cleanInput($_POST["name"]);
 			if($nome == "")
 			{
 				$errors[] = array(
 					"field" => "name",
 					"message" => "Attenzione: Il nome &egrave; obbligatorio."
 				);
+			}else if(!preg_match('/^[a-zA-ZáàéèóòíìúùÁÀÉÈÍÌÓÒÚÙ\s]+$/', $nome))
+			{
+				$errors[] = array(
+					"field" => "name",
+					"message" => "Attenzione: Il nome deve contenere solamente lettere."
+				);
 			}
 
-			$cognome = htmlentities(trim($_POST["surname"]));
+			$cognome = Application::cleanInput($_POST["surname"]);
 			if($cognome == "")
 			{
 				$errors[] = array(
 					"field" => "surname",
 					"message" => "Attenzione: Il cognome &egrave; obbligatorio."
 				);
+			}else if(!preg_match('/^[a-zA-ZáàéèóòíìúùÁÀÉÈÍÌÓÒÚÙ\s]+$/', $cognome))
+			{
+				$errors[] = array(
+					"field" => "surname",
+					"message" => "Attenzione: Il cognome deve contenere solamente lettere."
+				);
 			}
 
-			$datanascita_raw = trim($_POST["birthdate"]);
+			$datanascita_raw = Application::cleanInput($_POST["birthdate"]);
 			if($datanascita_raw == "")
 			{
 				$errors[] = array(
@@ -217,11 +240,31 @@ class AuthController
 					);
 				}else
 				{
-					$datanascita->setTime(0,0,0,0);
+					$currentdate = new DateTime();
+					if($datanascita > $currentdate)
+					{
+						$errors[] = array(
+							"field" => "birthdate",
+							"message" => "Attenzione: &Egrave; stata inserita una data futura come data di nascita, questo valore non è ammesso."
+						);
+					}else
+					{
+						$age = $currentdate->diff($datanascita);
+						if($age->y < 18)
+						{
+							$errors[] = array(
+								"field" => "birthdate",
+								"message" => "Attenzione: &Egrave; necessario essere almeno maggiorenni; la data che hai inserito indica che non sei maggiorenne."
+							);
+						}else
+						{
+							$datanascita->setTime(0,0,0,0);
+						}
+					}
 				}
 			}
 
-			$descrizione = htmlentities(trim($_POST["additionalinfo"]));
+			$descrizione = Application::cleanInput($_POST["additionalinfo"]);
 			if($descrizione == "")
 			{
 				$errors[] = array(
@@ -276,19 +319,10 @@ class AuthController
 				return $this->regsuccessAction();
 			}
 		}
-		// First page load
-		$page = new View();
-		$page->setName("registration");
-		$page->setPath("auth/registration.html");
-		$page->setTemplate("main");
-		$page->setTitle("Registra il tuo account " . Application::PROJECT_TITLE);
-		$page->setId("registration");
-		$page->setFormAction("/auth/register/");
-		$page->addBreadcrumb("Home", "/home/", "lang=\"en\"");
-		$page->addBreadcrumb("Registrazione nuovo account", null);
 
 		if(count($errors) > 0)
 		{
+			$page->addMessage(View::MSG_TYPE_ERROR, "Attenzione: ci sono uno o pi&ugrave; errori nel modulo; gli errori sono elencati in dettaglio vicino ai campi corrispondenti nel modulo.");
 			foreach($errors as $err)
 				$page->addFormError($err["field"], $err["message"]);
 		}

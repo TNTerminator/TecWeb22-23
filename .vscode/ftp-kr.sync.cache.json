@@ -14,16 +14,16 @@
     },
     ".htaccess": {
       "type": "-",
-      "size": 116,
+      "size": 404,
       "lmtime": 0,
-      "modified": false
+      "modified": true
     },
     ".well-known": {},
     "cgi-bin": {},
     "controllers": {},
     "error_log": {
       "type": "-",
-      "size": 31412,
+      "size": 35958,
       "lmtime": 0,
       "modified": true
     },

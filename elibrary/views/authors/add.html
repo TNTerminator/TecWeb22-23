@@ -1,0 +1,51 @@
+<h3>Aggiungi una nuova scheda autore</h3>
+<form method="post" action="##-View::FormAction-##" id="authors-add-form">
+	##-View::Messages-##
+	<fieldset>
+		<legend>Scheda autore</legend>
+
+		<div class="field">
+			<label for="name">Nome</label>
+			<input type="text" name="name" id="name" value="##-Post::name-##" required>
+			##-FieldError::name-##
+		</div>
+
+		<div class="field">
+			<label for="surname">Cognome</label>
+			<input type="text" name="surname" id="surname" value="##-Post::surname-##" required>
+			##-FieldError::surname-##
+		</div>
+
+		<div class="field">
+			<label for="birthdate">Data di nascita</label>
+			<input type="date" name="birthdate" id="birthdate" value="##-Post::birthdate-##" required>
+			##-FieldError::birthdate-##
+		</div>
+
+		<div class="field">
+			<label for="birthplace">Luogo di nascita</label>
+			<input type="text" name="birthplace" id="birthplace" value="##-Post::birthplace-##" required>
+			##-FieldError::birthplace-##
+		</div>
+
+		<div class="field">
+			<label for="codmothertongue">Lingua madre</label>
+			<select name="codmothertongue">
+				<option>Selezionare una lingua dall'elenco...</option>
+				##-Dict::MotherTongueOptions-##
+			</select>
+			##-FieldError::codmothertongue-##
+		</div>
+
+		<div class="field">
+			<label for="additionalinfo">Informazioni sull'autore</label>
+			<textarea name="additionalinfo" id="additionalinfo">##-Post::additionalinfo-##</textarea>
+			##-FieldError::additionalinfo-##
+		</div>
+	</fieldset>
+
+	<input type="submit" name="CMD_Execute" value="Aggiungi scheda autore">
+</form>
+<script type="text/javascript">
+document.forms["login-form"].addEventListener("submit", checkLoginForm);
+</script>

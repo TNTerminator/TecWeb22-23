@@ -54,6 +54,514 @@ class DbManager
 		$this->Connection();
 	}
 
+
+	public function authorsList()
+	{
+		$authors = array();
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare("SELECT * FROM authors ORDER BY Surname, Name");
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}
+		try
+		{
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{
+				while($authorassoc = $result->fetch_assoc())
+				{
+					$BirthDate = DateTime::createFromFormat("Y-m-d", $authorassoc["BirthDate"]);
+					$TsCreate = DateTime::createFromFormat("Y-m-d H:i:s", $authorassoc["TsCreate"]);
+					$TsUpdate = DateTime::createFromFormat("Y-m-d H:i:s", $authorassoc["TsUpdate"]);
+					$author = new Author();
+					$author
+						->setId($authorassoc["IDAuthor"])
+						->setSurname($authorassoc["Surname"])
+						->setName($authorassoc["Name"])
+						->setBirthDate($BirthDate)
+						->setBirthPlace($authorassoc["BirthPlace"])
+						->setCodMotherTongue($authorassoc["CodMotherTongue"])
+						->setMotherTongue($this->languageSelect($authorassoc["CodMotherTongue"]))
+						->setAdditionalInfo($authorassoc["AdditionalInfo"])
+						->setTsCreate($TsCreate)
+						->setTsUpdate($TsUpdate);
+					$authors[] = $author;
+				}
+			}
+			$result->close();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $authors;
+	}
+
+	public function authorSelect($id)
+	{
+		$author = null;
+		if($id == null || $id <= 0)
+			return null;
+		
+		try
+		{
+			$stmt = $this->Connection()->prepare("SELECT * FROM authors WHERE IDAuthor = ?");
+			$stmt->bind_param("i", $id);
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}
+		try
+		{
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0 && $authorassoc = $result->fetch_assoc())
+			{
+				$BirthDate = DateTime::createFromFormat("Y-m-d", $authorassoc["BirthDate"]);
+				$TsCreate = DateTime::createFromFormat("Y-m-d H:i:s", $authorassoc["TsCreate"]);
+				$TsUpdate = DateTime::createFromFormat("Y-m-d H:i:s", $authorassoc["TsUpdate"]);
+				$author = new Author();
+				$author
+					->setId($authorassoc["IDAuthor"])
+					->setSurname($authorassoc["Surname"])
+					->setName($authorassoc["Name"])
+					->setBirthDate($BirthDate)
+					->setBirthPlace($authorassoc["BirthPlace"])
+					->setCodMotherTongue($authorassoc["CodMotherTongue"])
+					->setMotherTongue($this->languageSelect($authorassoc["CodMotherTongue"]))
+					->setAdditionalInfo($authorassoc["AdditionalInfo"])
+					->setTsCreate($TsCreate)
+					->setTsUpdate($TsUpdate);
+			}
+			$result->close();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $author;
+	}
+
+	public function authorSave(Author $author)
+	{
+		if($author->getId() == null)
+			return $this->authorInsert($author);
+		else
+			return $this->authorUpdate($author);
+	}
+
+	public function authorInsert(Author $author)
+	{
+		if($author == null)
+			return false;
+
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare(
+				"INSERT INTO authors (" . 
+					"Surname, " .
+					"Name, " .
+					"BirthDate, " .
+					"BirthPlace, " .
+					"CodMotherTongue, " .
+					"AdditionalInfo " .
+				") VALUES (?, ?, ?, ?, ?, ?)"
+			);
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}
+		
+		try
+		{
+			$stmt->bind_param("ssssss", $author->getSurname(), $author->getName(), $author->getBirthDate()->format("Y-m-d"), $author->getBirthPlace(), $author->getCodMotherTongue(), $author->getAdditionalInfo());
+			$stmt->execute();
+			$author->setId($this->Connection()->insert_id);
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return true;
+	}
+
+	public function authorUpdate(Author $author)
+	{
+		if($author == null)
+			return false;
+
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare(
+				"UPDATE authors SET " . 
+					"Surname = ?, " .
+					"Name = ?, " .
+					"BirthDate = ?, " .
+					"BirthPlace = ?, " .
+					"CodMotherTongue = ?, " .
+					"AdditionalInfo = ?, " .
+					"TsUpdate = NOW(), " .
+				"WHERE IDAuthor = ?"
+			);
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}
+		
+		try
+		{
+			@$stmt->bind_param("ssssssi", $author->getSurname(), $author->getName(), $author->getBirthDate(), $author->getBirthPlace(), $author->getCodMotherTongue(), $author->getAdditionalInfo(), $author->getId());
+			$stmt->execute();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return true;
+	}
+
+	public function authorDelete($id)
+	{
+		// TODO integrità referenziale!!!
+		if($id == null || $id <= 0)
+			return false;
+
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare(
+				"DELETE FROM authors WHERE IDAuthor = ?"
+			);
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}
+		
+		try
+		{
+			@$stmt->bind_param("i", $id);
+			$stmt->execute();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return true;
+	}
+
+	public function booksList()
+	{
+		$books = array();
+		
+		try
+		{
+			$stmt = $this->Connection()->prepare("SELECT * FROM books");
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}
+		try
+		{
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{ 
+				while($bookassoc = $result->fetch_assoc())
+				{
+					$TsCreate = DateTime::createFromFormat("Y-m-d H:i:s", $bookassoc["TsCreate"]);
+					$TsUpdate = DateTime::createFromFormat("Y-m-d H:i:s", $bookassoc["TsUpdate"]);
+					$book = new Book();
+					$book
+						->setId($bookassoc["IDBook"])
+						->setTitle($bookassoc["Title"])
+						->setPubYear($bookassoc["PubYear"])
+						->setEditor($bookassoc["Editor"])
+						->setPrice($bookassoc["Price"])
+						->setRatingValue($bookassoc["RatingValue"])
+						->setRatingCount($bookassoc["RatingCount"])
+						->setSoldQuantity($bookassoc["SoldQuantity"])
+						->setShortDescription($bookassoc["ShortDescription"])
+						->setDescription($bookassoc["Description"])
+						->setTsCreate($TsCreate)
+						->setTsUpdate($TsUpdate);
+					$books[] = $book;
+				}
+			}
+			$result->close();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $books;
+	}
+
+	public function bookSelect($id)
+	{
+		$book = null;
+		if($id == null || $id <= 0)
+			return null;
+		
+		try
+		{
+			$stmt = $this->Connection()->prepare("SELECT * FROM books WHERE IDBook = ?");
+			$stmt->bind_param("i", $id);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			$book = new Book();
+			if($result->num_rows > 0 && $bookassoc = $result->fetch_assoc())
+			{
+				$TsCreate = DateTime::createFromFormat("Y-m-d H:i:s", $bookassoc["TsCreate"]);
+				$TsUpdate = DateTime::createFromFormat("Y-m-d H:i:s", $bookassoc["TsUpdate"]);
+				$book
+					->setId($bookassoc["IDBook"])
+					->setTitle($bookassoc["Title"])
+					->setPubYear($bookassoc["PubYear"])
+					->setEditor($bookassoc["Editor"])
+					->setPrice($bookassoc["Price"])
+					->setRatingValue($bookassoc["RatingValue"])
+					->setRatingCount($bookassoc["RatingCount"])
+					->setSoldQuantity($bookassoc["SoldQuantity"])
+					->setShortDescription($bookassoc["ShortDescription"])
+					->setDescription($bookassoc["Description"])
+					->setTsCreate($TsCreate)
+					->setTsUpdate($TsUpdate);
+			}
+			$result->close();
+
+			try
+			{
+				$stmt_cat = $this->Connection()->prepare("SELECT * FROM books_categories WHERE IDBook = ?");
+				$stmt_cat->bind_param("i", $id);
+				$stmt_cat->execute();
+				$result_cat = $stmt_cat->get_result();
+				if($result_cat->num_rows > 0)
+				{
+					while($catassoc = $result_cat->fetch_assoc())
+					{
+						$book
+							->addIdCategory($catassoc["IDCategory"]);
+					}
+				}
+				$result_cat->close();
+			}catch(mysqli_sql_exception $e)
+			{
+				throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt_cat->error), DbException::ERR_QUERY, $e);
+			}finally
+			{
+				$stmt_cat->close();
+			}
+
+			try
+			{
+				$stmt_aut = $this->Connection()->prepare("SELECT * FROM books_authors WHERE IDBook = ?");
+				$stmt_aut->bind_param("i", $id);
+				$stmt_aut->execute();
+				$result_aut = $stmt_aut->get_result();
+				if($result_aut->num_rows > 0)
+				{
+					while($autassoc = $result_aut->fetch_assoc())
+					{
+						$book
+							->addIdAuthor($autassoc["IDAuthor"]);
+					}
+				}
+				$result_aut->close();
+			}catch(mysqli_sql_exception $e)
+			{
+				throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt_aut->error), DbException::ERR_QUERY, $e);
+			}finally
+			{
+				$stmt_aut->close();
+			}
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $book;
+	}
+
+	public function bookSave(Book $book)
+	{
+		if($book->getId() == null)
+			return $this->bookInsert($book);
+		else
+			return $this->bookUpdate($book);
+	}
+
+	public function bookInsert(Book $book)
+	{
+		// Check if username or email already exists
+		if($book == null)
+			return false;
+
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare(
+				"INSERT INTO books (" . 
+					"Title," .
+					"PubYear," .
+					"Editor," .
+					"Price," . 
+					"ShortDescription," . 
+					"Description," .
+					"TsCreate" . 
+				") VALUES (?, ?, ?, ?, ?, ?, NOW())"
+			);
+			$title = $book->getTitle();
+			$pubyear = $book->getPubYear();
+			$editor = $book->getEditor();
+			$price = $book->getPrice();
+			$shortdesc = $book->getShortDescription();
+			$desc = $book->getDescription();
+			$stmt->bind_param("sisdss", $title, $pubyear, $editor, $price, $shortdesc, $desc);
+			$stmt->execute();
+			$book->setId($this->Connection()->insert_id);
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+			$stmt->close();
+		}
+		
+		$result = $this->bookSaveAuthors($book);
+		$result &= $this->bookSaveCategories($book);
+
+		return $result;
+	}
+
+	public function bookUpdate(Book $book)
+	{
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare(
+				"UPDATE books SET " .
+					"Title = ?," .
+					"PubYear = ?," . 
+					"Editor = ?," . 
+					"Price = ?," .
+					"ShortDescription = ?," .
+					"Description = ?," .
+					"TsUpdate = NOW() " .
+				"WHERE IDBook = ?"
+			);
+			$id = $book->getId();
+			$title = $book->getTitle();
+			$pubyear = $book->getPubYear();
+			$editor = $book->getEditor();
+			$price = $book->getPrice();
+			$shortdesc = $book->getShortDescription();
+			$desc = $book->getDescription();
+			$stmt->bind_param("sisdssi", $title, $pubyear, $editor, $price, $shortdesc, $desc, $id);
+			$stmt->execute();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+			$stmt->close();
+		}
+		
+		$result = $this->bookSaveAuthors($book);
+		$result &= $this->bookSaveCategories($book);
+
+		return $result;
+	}
+
+	public function bookSaveAuthors($book)
+	{
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare(
+				"DELETE FROM books_authors WHERE IdBook = ?"
+			);
+			@$stmt->bind_param("i", $book->getId());
+			$stmt->execute();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'esecuzione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+			$stmt->close();
+		}
+		foreach($book->getIdAuthors() as $idauthor)
+		{
+			try
+			{
+				$stmt = $this->Connection()->prepare(
+					"INSERT INTO books_authors (" . 
+						"IdBook," .
+						"IdAuthor" . 
+					") VALUES (?, ?)"
+				);
+				@$stmt->bind_param("ii", $book->getId(), $idauthor);
+				$stmt->execute();
+			}catch(mysqli_sql_exception $e)
+			{
+				throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+				$stmt->close();
+			}
+		}
+		$stmt->close();
+		return true;
+	}
+
+	public function bookSaveCategories($book)
+	{
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare(
+				"DELETE FROM books_categories WHERE IdBook = ?"
+			);
+			@$stmt->bind_param("i", $book->getId());
+			$stmt->execute();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'esecuzione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+			$stmt->close();
+		}
+		foreach($book->getIdCategories() as $idcategory)
+		{
+			try
+			{
+				$stmt = $this->Connection()->prepare(
+					"INSERT INTO books_categories (" . 
+						"IdBook," .
+						"IdCategory" . 
+					") VALUES (?, ?)"
+				);
+				@$stmt->bind_param("ii", $book->getId(), $idcategory);
+				$stmt->execute();
+			}catch(mysqli_sql_exception $e)
+			{
+				throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+				$stmt->close();
+			}
+		}
+		$stmt->close();
+		return true;
+	}
+
 	public function categorySelect($id)
 	{
 		$category = null;
@@ -101,7 +609,6 @@ class DbManager
 
 	public function categoryInsert(Category $category)
 	{
-		// Check if username or email already exists
 		if($category == null)
 			return false;
 
@@ -136,7 +643,6 @@ class DbManager
 
 	public function categoryUpdate(Category $category)
 	{
-		// Check if username or email already exists
 		if($category == null)
 			return false;
 
@@ -170,7 +676,7 @@ class DbManager
 
 	public function categoryDelete($id)
 	{
-		// Check if username or email already exists
+		// TODO cancellare anche le figlie !!!
 		if($id == null || $id <= 0)
 			return false;
 
@@ -244,6 +750,7 @@ class DbManager
 						->setIdParentCategory($catassoc["IDParentCategory"])
 						->setName($catassoc["Name"]);
 					$categories[] = $category;
+					$category->setChilds($this->categoriesTree($category->getId()));
 				}
 			}
 			$result->close();
@@ -254,12 +761,70 @@ class DbManager
 		{
 			$stmt->close();
 		}
-		foreach($categories as $category)
-			if($category->getIdParentCategory() != null)
-			{
-				$category->setChilds($this->categoriesTree($category->getId()));
-			}
 		return $categories;
+	}
+
+	public function languageList()
+	{
+		$languages = array();
+		
+		try
+		{
+			$stmt = $this->Connection()->prepare("SELECT * FROM languages ORDER BY Lang");
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}
+		try
+		{
+			$stmt->execute();
+			$result = $stmt->get_result();
+			while($result->num_rows > 0 && $langassoc = $result->fetch_assoc())
+			{
+				$languages[$langassoc["CodLang"]] = $langassoc["Lang"];
+			}
+			$result->close();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $languages;
+	}
+
+	public function languageSelect($codlanguage)
+	{
+		$language = null;
+		if($codlanguage == null)
+			return null;
+		
+		try
+		{
+			$stmt = $this->Connection()->prepare("SELECT * FROM languages WHERE CodLang = ?");
+			$stmt->bind_param("s", $codlanguage);
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}
+		try
+		{
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0 && $langassoc = $result->fetch_assoc())
+			{
+				$language = $langassoc["Lang"];
+			}
+			$result->close();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $language;
 	}
 
 	public function userSave(User $user)
@@ -545,44 +1110,42 @@ class DbManager
 		return $books;
 	}
 
-	public function bookSave(Book $book)
+	public function getBooksByCategory($idcategory)
 	{
-		if($book->getId() == null)
-			return $this->bookInser($book);
-		else
-			return $this->bookUpdate($book);
-	}
-
-	public function bookInsert(Book $book)
-	{
-		// Check if username or email already exists
-		if($book == null)
-			return false;
-
+		$books = array();
 		$stmt = null;
 		try
 		{
-			$stmt = $this->Connection()->prepare(
-				"INSERT INTO books (" . 
-					"Title," .
-					"PubYear," .
-					"Editor," .
-					"Price," . 
-					"ShortDescription," . 
-					"Description," .
-					"TsCreate" . 
-				") VALUES (?, ?, ?, ?, ?, ?, NOW())"
-			);
+			$stmt = $this->Connection()->prepare("SELECT * FROM books NATURAL JOIN books_categories WHERE IDCategory = ?");
 		}catch(mysqli_sql_exception $e)
 		{
 			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
-		}
-		
+		}		
 		try
 		{
-			@$stmt->bind_param("sisfss", $book->getTitle(), $book->getPubYear(), $book->getEditor(), $book->getPrice(), $book->getShortDescription(), $book->getDescription());
+			$stmt->bind_param("i", $idcategory);
 			$stmt->execute();
-			$book->setId($this->Connection()->insert_id);
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{
+				while($bookassoc = $result->fetch_assoc())
+				{
+					$book = new Book();
+					$book
+						->setId($bookassoc["IDBook"])
+						->setTitle($bookassoc["Title"])
+						->setPubYear($bookassoc["PubYear"])
+						->setEditor($bookassoc["Editor"])
+						->setPrice($bookassoc["Price"])
+						->setRatingValue($bookassoc["RatingValue"])
+						->setRatingCount($bookassoc["RatingCount"])
+						->setSoldQuantity($bookassoc["SoldQuantity"])
+						->setShortDescription($bookassoc["ShortDescription"])
+						->setDescription($bookassoc["Description"]);
+					$books[] = $book;
+				}
+			}
+			$result->close();
 		}catch(mysqli_sql_exception $e)
 		{
 			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
@@ -590,42 +1153,7 @@ class DbManager
 		{
 			$stmt->close();
 		}
-		return true;
-	}
-
-	public function bookUpdate(Book $book)
-	{
-		$stmt = null;
-		try
-		{
-			$stmt = $this->Connection()->prepare(
-				"UPDATE Auto SET " .
-					"Title = ?," .
-					"PubYear = ?," . 
-					"Editor = ?," . 
-					"Price = ?," .
-					"ShortDescription = ?," .
-					"Description = ?," .
-					"TsUpdate = NOW() " .
-				"WHERE IDBook = ?"
-			);
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
-		}
-		
-		try
-		{
-			@$stmt->bind_param("sisfss", $book->getTitle(), $book->getPubYear(), $book->getEditor(), $book->getPrice(), $book->getShortDescription(), $book->getDescription());
-			$stmt->execute();
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
-		}finally
-		{
-			$stmt->close();
-		}
-		return true;
+		return $books;
 	}
 
 	public function getUserById($id)
