@@ -24,6 +24,10 @@ class IndexController
 		$page->setKeywords(""); // TODO
 		$page->setDescription(""); // TODO
 
+		$page->addDictionary("books_latest", self::printBooksLatest(3));
+		$page->addDictionary("books_bestseller", self::printBooksBestSeller(3));
+		$page->addDictionary("books_toprating", self::printBooksTopRating(3));
+
 		$page->render();
 	}
 
@@ -72,5 +76,41 @@ class IndexController
 		$page->addBreadcrumb("Home", "/home/", "lang=\"en\"");
 		$page->addBreadcrumb("Informativa sul trattamento dei dati personali", null);
 		$page->render();
+	}
+
+	public static function printBooksLatest($num = 6)
+	{
+		$books = FrontController::DbManager()->getBooksLatest($num);
+		$html = "";
+		foreach($books as $book)
+		{
+			$authors = FrontController::DbManager()->getAuthorsByBook($book->getId());
+			$html .= BooksController::printBookSmallBox($book, $authors);
+		}
+		return $html;
+	}
+
+	public static function printBooksBestSeller($num = 6)
+	{
+		$books = FrontController::DbManager()->getBooksBestSeller($num);
+		$html = "";
+		foreach($books as $book)
+		{
+			$authors = FrontController::DbManager()->getAuthorsByBook($book->getId());
+			$html .= BooksController::printBookSmallBox($book, $authors);
+		}
+		return $html;
+	}
+
+	public static function printBooksTopRating($num = 6)
+	{
+		$books = FrontController::DbManager()->getBooksTopRating($num);
+		$html = "";
+		foreach($books as $book)
+		{
+			$authors = FrontController::DbManager()->getAuthorsByBook($book->getId());
+			$html .= BooksController::printBookSmallBox($book, $authors);
+		}
+		return $html;
 	}
 }

@@ -1064,6 +1064,49 @@ class DbManager
 		return $user;
 	}
 
+	public function getAuthorsByBook($idbook)
+	{
+		$authors = array();
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare("SELECT * FROM authors NATURAL JOIN books_authors WHERE IDBook = ?");
+			$stmt->bind_param("i", $idbook);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{
+				while($authorassoc = $result->fetch_assoc())
+				{
+					$BirthDate = DateTime::createFromFormat("Y-m-d", $authorassoc["BirthDate"]);
+					$TsCreate = DateTime::createFromFormat("Y-m-d H:i:s", $authorassoc["TsCreate"]);
+					$TsUpdate = DateTime::createFromFormat("Y-m-d H:i:s", $authorassoc["TsUpdate"]);
+					$author = new Author();
+					$author
+						->setId($authorassoc["IDAuthor"])
+						->setSurname($authorassoc["Surname"])
+						->setName($authorassoc["Name"])
+						->setBirthDate($BirthDate)
+						->setBirthPlace($authorassoc["BirthPlace"])
+						->setCodMotherTongue($authorassoc["CodMotherTongue"])
+						->setMotherTongue($this->languageSelect($authorassoc["CodMotherTongue"]))
+						->setAdditionalInfo($authorassoc["AdditionalInfo"])
+						->setTsCreate($TsCreate)
+						->setTsUpdate($TsUpdate);
+					$authors[] = $author;
+				}
+			}
+			$result->close();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $authors;
+	}
+
 	public function getBooksByAuthor($idauthor)
 	{
 		$books = array();
@@ -1110,19 +1153,16 @@ class DbManager
 		return $books;
 	}
 
-	public function getBooksByCategory($idcategory)
+	public function getBooksByCategory($idcategory, $limit = null)
 	{
 		$books = array();
 		$stmt = null;
 		try
 		{
-			$stmt = $this->Connection()->prepare("SELECT * FROM books NATURAL JOIN books_categories WHERE IDCategory = ?");
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
-		}		
-		try
-		{
+			$sqlstring = "SELECT * FROM books NATURAL JOIN books_categories WHERE IDCategory = ?";
+			if($limit != null)
+				$sqlstring .= " LIMIT 0," . $limit;
+			$stmt = $this->Connection()->prepare($sqlstring);
 			$stmt->bind_param("i", $idcategory);
 			$stmt->execute();
 			$result = $stmt->get_result();
@@ -1149,6 +1189,123 @@ class DbManager
 		}catch(mysqli_sql_exception $e)
 		{
 			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $books;
+	}
+
+	public function getBooksLatest($num = 6)
+	{
+		$books = array();
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare("SELECT * FROM books ORDER BY TsCreate DESC LIMIT 0, " . $num);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{
+				while($bookassoc = $result->fetch_assoc())
+				{
+					$book = new Book();
+					$book
+						->setId($bookassoc["IDBook"])
+						->setTitle($bookassoc["Title"])
+						->setPubYear($bookassoc["PubYear"])
+						->setEditor($bookassoc["Editor"])
+						->setPrice($bookassoc["Price"])
+						->setRatingValue($bookassoc["RatingValue"])
+						->setRatingCount($bookassoc["RatingCount"])
+						->setSoldQuantity($bookassoc["SoldQuantity"])
+						->setShortDescription($bookassoc["ShortDescription"])
+						->setDescription($bookassoc["Description"]);
+					$books[] = $book;
+				}
+			}
+			$result->close();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $books;
+	}
+
+	public function getBooksBestSeller($num = 6)
+	{
+		$books = array();
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare("SELECT * FROM books ORDER BY SoldQuantity DESC LIMIT 0, " . $num);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{
+				while($bookassoc = $result->fetch_assoc())
+				{
+					$book = new Book();
+					$book
+						->setId($bookassoc["IDBook"])
+						->setTitle($bookassoc["Title"])
+						->setPubYear($bookassoc["PubYear"])
+						->setEditor($bookassoc["Editor"])
+						->setPrice($bookassoc["Price"])
+						->setRatingValue($bookassoc["RatingValue"])
+						->setRatingCount($bookassoc["RatingCount"])
+						->setSoldQuantity($bookassoc["SoldQuantity"])
+						->setShortDescription($bookassoc["ShortDescription"])
+						->setDescription($bookassoc["Description"]);
+					$books[] = $book;
+				}
+			}
+			$result->close();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $books;
+	}
+
+	public function getBooksTopRating($num = 6)
+	{
+		$books = array();
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare("SELECT *, (CAST(RatingValue AS DECIMAL) / CAST(RatingCount AS DECIMAL)) AS RatingScore FROM books ORDER BY RatingScore DESC LIMIT 0, " . $num);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{
+				while($bookassoc = $result->fetch_assoc())
+				{
+					$book = new Book();
+					$book
+						->setId($bookassoc["IDBook"])
+						->setTitle($bookassoc["Title"])
+						->setPubYear($bookassoc["PubYear"])
+						->setEditor($bookassoc["Editor"])
+						->setPrice($bookassoc["Price"])
+						->setRatingValue($bookassoc["RatingValue"])
+						->setRatingCount($bookassoc["RatingCount"])
+						->setSoldQuantity($bookassoc["SoldQuantity"])
+						->setShortDescription($bookassoc["ShortDescription"])
+						->setDescription($bookassoc["Description"]);
+					$books[] = $book;
+				}
+			}
+			$result->close();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
 		}finally
 		{
 			$stmt->close();

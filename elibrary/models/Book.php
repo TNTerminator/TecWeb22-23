@@ -226,4 +226,51 @@ class Book
 	{
 		return $this->_TsUpdate;
 	}
+
+	public function getCover()
+	{
+		return ""; // TODO
+	}
+
+	public static function getRatingText($rating)
+	{
+		if($rating > 0 && $rating < 1.5)
+		{
+			return "Pessimo";
+		}else if($rating >= 1.5 && $rating < 2.5)
+		{
+			return "Brutto";
+		}else if($rating >= 2.5 && $rating < 3.5)
+		{
+			return "Neutro";
+		}else if($rating >= 3.5 && $rating < 4.5)
+		{
+			return "Bello";
+		}else if($rating >= 4.5)
+		{
+			return "Ottimo";
+		}else 
+			return "Non valutato";
+	}
+
+	public static function getRatingInt($rating)
+	{
+		if($rating > 0 && $rating < 1.5)
+		{
+			return 1;
+		}else if($rating >= 1.5 && $rating < 2.5)
+		{
+			return 2;
+		}else if($rating >= 2.5 && $rating < 3.5)
+		{
+			return 3;
+		}else if($rating >= 3.5 && $rating < 4.5)
+		{
+			return 4;
+		}else if($rating >= 4.5)
+		{
+			return 5;
+		}else 
+			return 0;
+	}
 }

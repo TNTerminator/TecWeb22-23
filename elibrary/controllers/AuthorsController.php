@@ -100,7 +100,7 @@ class AuthorsController
 					"field" => "name",
 					"message" => "Attenzione: Il Nome dell'autore &egrave; obbligatorio."
 				);
-			}else if(!preg_match('/^[a-zA-ZáàéèóòíìúùÁÀÉÈÍÌÓÒÚÙ\s]+$/', $name))
+			}else if(!preg_match('/^[-.a-zA-ZáàéèóòíìúùÁÀÉÈÍÌÓÒÚÙ\s]+$/', $name))
 			{
 				$errors[] = array(
 					"field" => "name",
@@ -112,13 +112,13 @@ class AuthorsController
 			if($surname == "")
 			{
 				$errors[] = array(
-					"field" => "name",
+					"field" => "surname",
 					"message" => "Attenzione: Il Cognome dell'autore &egrave; obbligatorio."
 				);
-			}else if(!preg_match('/^[a-zA-ZáàéèóòíìúùÁÀÉÈÍÌÓÒÚÙ\s]+$/', $surname))
+			}else if(!preg_match('/^[-.a-zA-ZáàéèóòíìúùÁÀÉÈÍÌÓÒÚÙ\s]+$/', $surname))
 			{
 				$errors[] = array(
-					"field" => "name",
+					"field" => "surname",
 					"message" => "Attenzione: Il nome deve contenere solamente lettere."
 				);
 			}
@@ -128,7 +128,7 @@ class AuthorsController
 			{
 				$errors[] = array(
 					"field" => "birthdate",
-					"message" => "Il campo &egrave; obbligatorio."
+					"message" => "La data di nascita &egrave; un campo obbligatorio."
 				);
 			}else
 			{
@@ -137,8 +137,18 @@ class AuthorsController
 				{
 					$errors[] = array(
 						"field" => "birthdate",
-						"message" => "La data dell'evento non &egrave; valida."
+						"message" => "La data di nascita non &egrave; valida."
 					);
+				}else
+				{
+					$datemin = new DateTime();
+					if($birthdate >= $datemin)
+					{
+						$errors[] = array(
+							"field" => "birthdate",
+							"message" => "La data di nascita &egrave; una data futura, quindi impossibile; per cortesia inserire una data di nascita nel passato."
+						);
+					}
 				}
 			}
 
@@ -250,7 +260,7 @@ class AuthorsController
 					"field" => "name",
 					"message" => "Attenzione: Il Nome dell'autore &egrave; obbligatorio."
 				);
-			}else if(!preg_match('/^[a-zA-ZáàéèóòíìúùÁÀÉÈÍÌÓÒÚÙ\s]+$/', $name))
+			}else if(!preg_match('/^[-.a-zA-ZáàéèóòíìúùÁÀÉÈÍÌÓÒÚÙ\s]+$/', $name))
 			{
 				$errors[] = array(
 					"field" => "name",
@@ -262,13 +272,13 @@ class AuthorsController
 			if($surname == "")
 			{
 				$errors[] = array(
-					"field" => "name",
+					"field" => "surname",
 					"message" => "Attenzione: Il Cognome dell'autore &egrave; obbligatorio."
 				);
-			}else if(!preg_match('/^[a-zA-ZáàéèóòíìúùÁÀÉÈÍÌÓÒÚÙ\s]+$/', $surname))
+			}else if(!preg_match('/^[-.a-zA-ZáàéèóòíìúùÁÀÉÈÍÌÓÒÚÙ\s]+$/', $surname))
 			{
 				$errors[] = array(
-					"field" => "name",
+					"field" => "surname",
 					"message" => "Attenzione: Il nome deve contenere solamente lettere."
 				);
 			}
@@ -289,6 +299,16 @@ class AuthorsController
 						"field" => "birthdate",
 						"message" => "La data dell'evento non &egrave; valida."
 					);
+				}else
+				{
+					$datemin = new DateTime();
+					if($birthdate >= $datemin)
+					{
+						$errors[] = array(
+							"field" => "birthdate",
+							"message" => "La data di nascita &egrave; una data futura, quindi impossibile; per cortesia inserire una data di nascita nel passato."
+						);
+					}
 				}
 			}
 

@@ -1,0 +1,36 @@
+<article class="book book_full">
+	<h2>##-Dict::BookTitle-##</h2>
+	<figure>
+		<figcaption>Immagine di copertina</figcaption>
+		<img src="##-Dict::BookCoverPath-##" />
+	</figure>
+	<dl>
+		<dt class="author">Autore</dt>
+			<dd class="author">##-Dict::BookAuthors-##</dd> <!-- TODO decidere se aprire una pagina dedicata all'autore -->
+		<dt class="editor">Casa editrice</dt>
+			<dd class="editor">##-Dict::BookEditor-##</dd>
+		<dt class="pubdate">Anno pubblicazione</dt>
+			<dd class="pubdate">##-Dict::BookPubYear-##</dd>
+		<dt class="price">Prezzo</dt>
+			<dd class="price">##-Dict::BookPrice-## (IVA incl.)</dd>
+		<dt class="sold_quantity">Venduti</dt>
+			<dd class="sold_quantity">##-Dict::BookSoldQuantity-##</dd>
+		<dt class="rating">Valutazione</dt>
+			<dd class="rating">##-Dict::BookRating-##</dd>
+			<!--
+				Numero di stelline visualizzato tramite CSS tramite class 
+				val_1 => Pessimo
+				val_2 => Brutto
+				val_3 => Neutro
+				val_4 => Bello
+				val_5 => Ottimo
+			-->
+	</dl>
+	<p aria-label="Descrizione">##-Dict::BookDescription-##</p><!-- TODO serve la label ARIA?!? -->
+	<a role="button" href="##-Dict::AddToCart-##">Aggiungi al carrello</a>
+
+	<aside>
+		<h3>Informazioni sull'autore</h3>
+		##-Dict::AuthorsInfo-##
+	</aside>
+</article>

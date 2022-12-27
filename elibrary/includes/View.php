@@ -595,7 +595,64 @@ class View
 
 	public function getMenu($menuid)
 	{
-		return $this->getMainMenu();
+		switch($menuid)
+		{
+			case "adminmenu":
+				return $this->getAdminMenu();
+				break;
+
+			case "usermenu":
+				return $this->getUserMenu();
+				break;
+
+			case "footermenu1":
+				return $this->getUserMenu();
+				break;
+
+			case "footermenu2":
+				return $this->getContactInfo();
+				break;
+
+			default:
+				return $this->getMainMenu();
+		}
+	}
+
+	public function getAdminMenu()
+	{
+		$html = "";
+		if(AuthController::isAdmin())
+		{
+			$html = "<nav id=\"adminmenu\">
+			Menu amministrazione sito:
+			<ol>";
+			$html .= $this->getMenuItemByController("Gestione categorie", "categories", "list");
+			$html .= $this->getMenuItemByController("Gestione autori", "authors", "list");
+			$html .= $this->getMenuItemByController("Gestione libri", "books", "list");
+			$html .= "</ol> 
+			</nav>";
+		}
+		return $html;	
+	}
+
+	public function getUserMenu()
+	{
+		$html = "<nav id=\"usermenu\">	
+		<ol>";
+		if(AuthController::isLogged())
+		{
+			$html .= $this->getMenuItemByController("Carrello", "profile", "cart");
+			$html .= $this->getMenuItemByController("Profilo", "profile", "index");
+			$html .= $this->getMenuItemByController("I miei acquisti", "profile", "mylibrary");
+			$html .= $this->getMenuItemByController("Logout", "auth", "logout");
+		}else
+		{
+			$html .= $this->getMenuItemByController("Accedi", "auth", "login");
+			$html .= $this->getMenuItemByController("Registrati", "auth", "register");
+		}
+		$html .= "</ol> 
+		</nav>";
+		return $html;	
 	}
 
 	public function getMainMenu()
@@ -609,33 +666,35 @@ class View
 			<h2 id=\"menu_heading\" class=\"hideable\">Menu</h2>
 			<ol>";
 
-		if(AuthController::isAdmin())
+		/* TODO if(AuthController::isAdmin())
 		{
-			$html .= $this->getMenuItemByController("Profilo", "profile", "index");
 			$html .= $this->getMenuItemByController("Gestione categorie", "categories", "list");
 			$html .= $this->getMenuItemByController("Gestione autori", "authors", "list");
 			$html .= $this->getMenuItemByController("Gestione libri", "books", "list");
 			$html .= $this->getMenuItemByController("Logout", "auth", "logout");
 		}else
-		{
+		{*/
 			$html .= $this->getMenuItemByController("<span lang=\"en\">Home</span>", "index", "home");
 			$html .= $this->getMenuItemByController("Chi siamo", "index", "chisiamo");
 			$html .= $this->renderCategoriesMenu();
-			if(AuthController::isLogged())
-			{
-				$html .= $this->getMenuItemByController("Carrello", "profile", "cart");
-				$html .= $this->getMenuItemByController("Profilo", "profile", "index");
-				$html .= $this->getMenuItemByController("I miei acquisti", "profile", "mylibrary");
-				$html .= $this->getMenuItemByController("Logout", "auth", "logout");
-			}else
-			{
-				$html .= $this->getMenuItemByController("Accedi", "auth", "login");
-				$html .= $this->getMenuItemByController("Registrati", "auth", "register");
-			}
-		}
+			$html .= $this->getMenuItemByController("Autori", "authors", "index");
+		//}
 
 		$html .= "</ol> 
 		</nav>";
+		return $html;
+	}
+
+	public function getContactInfo()
+	{
+		$html = "";
+		$html .= "<h3>Contatti</h3>
+		<ul>
+			<li><address><a href=\"mailto:alberto.casadomoreno@studenti.unipd.it\" rel=\"author\">Alberto Casado Moreno</a></address></li>
+			<li><address><a href=\"mailto:gabriele.saracco@studenti.unipd.it\" rel=\"author\">Gabriele Saracco</a></address></li>
+			<li><address><a href=\"mailto:matteo.baggio.5@studenti.unipd.it\" rel=\"author\">Matteo Baggio</a></address></li>
+			<li><address><a href=\"mailto:michele.marchioro.1@studenti.unipd.it\" rel=\"author\">Michele Marchioro</a></address></li>
+		</ul>";
 		return $html;
 	}
 
@@ -676,5 +735,10 @@ class View
 		if($parentcategory == null && !$hiderootitem)
 			$html .= "</li>";
 		return $html;
+	}
+
+	public function getFormSearchBookAction()
+	{
+		return FrontController::getUrl("books", "search", null);
 	}
 }
