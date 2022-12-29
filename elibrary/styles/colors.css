@@ -88,3 +88,21 @@ body > footer
 	background-color: #0066cb;
 	color: #ffffff;
 }
+
+body > footer a,
+body > footer a:link
+{
+	color:#ffffff
+}
+
+body > footer a:hover, 
+body > footer a:focus
+{
+	color: #ffffff;
+	text-decoration-style: double;
+}
+
+body > footer a:visited {
+	color:#d55358;
+}
+
