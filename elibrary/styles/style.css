@@ -177,7 +177,7 @@ article.book_thumbnail
 
 	body > footer
 	{
-		clear: left;                               /*PRE: CHECK (a cosa serve????/non dovrebbe essere body > nav???)*/
+		clear: left;
 	}
 
 	footer
@@ -187,29 +187,24 @@ article.book_thumbnail
 		height: 10em;
 	}
 
-	footer > p
-	{
-		position:absolute;
-		top:50%;
-		margin: -1em 0 0 2em;
-		padding:0 0 0 2em;
-		border-left: 1px solid #ffffff;
-	}
-
 	footer > section#footerSection1 
 	{
-		width: 50%;
+		margin-top: 3.5em;
+		margin-left: 0.5em;
+		width: 45%;
 		float: left;
 	}
 
 	footer > section#footerSection2
 	{
+		margin-top: 3.5em;
 		width: 20%;
 		float: left;
 	}
 
 	footer > section#footerSection3
 	{
+		margin-top: 1.5em;
 		width: 30%;
 		float: right;
 	}
