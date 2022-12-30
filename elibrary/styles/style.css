@@ -78,6 +78,11 @@ footer
 	padding-right: 1em;
 }
 
+main section
+{
+clear:left;
+}
+
 footer
 {
 	background-image: url(https://www.unipd.it/sites/unipd.it/themes/unipd_2017/img/logo-UNIPD-white.png);
@@ -86,7 +91,7 @@ footer
 	min-height: calc(110px + 2em);
 }
 
-.book
+article.book_thumbnail
 {
 	background-color: lightgrey; /*immagine libro come sfondo*/
   	width: 15em;
@@ -94,6 +99,7 @@ footer
 	border-radius: 15px;
   	padding: 1em;
  	margin: 1em;
+	float:left; 
 }
 
 @media only screen and (max-width: 600px) 
@@ -192,19 +198,19 @@ footer
 
 	footer > section#footerSection1 
 	{
-		width:50%;
-		float:left;
+		width: 50%;
+		float: left;
 	}
 
 	footer > section#footerSection2
 	{
-		width:20%;
-		float: auto;
+		width: 20%;
+		float: left;
 	}
 
 	footer > section#footerSection3
 	{
-		width:30%;
+		width: 30%;
 		float: right;
 	}
 }
