@@ -119,7 +119,10 @@ class BooksController
 		$page->addDictionary("BookDescription", $book->getDescription());
 		$page->addDictionary("AddToCart", FrontController::getUrl("cart", "add", array("id"=>$book->getId())));
 
-		$page->addDictionary("AuthorsInfo", "In costruzione");
+		$authors_info = "";
+		foreach($authors as $author)
+			$authors_info .= AuthorsController::printAuthorSmallBox($author);
+		$page->addDictionary("AuthorsInfo", $authors_info);
 
 		$page->render();
 	}
@@ -132,8 +135,11 @@ class BooksController
 			$list[$cat->getId()] = str_repeat("--", $level) . ($level > 0 ? "> " : "") . $cat->getName();
 			$childs = $cat->getChilds();
 			if($childs != null && count($childs) > 0)
-				//$list = array_merge($list, $this->categoryTreeToList($childs, $level+1));
-				array_push($list, ...$this->categoryTreeToList($childs, $level+1));
+			{
+				$list2 = $this->categoryTreeToList($childs, $level+1);
+				foreach($list2 as $idc => $ccc)
+					$list[$idc] = $ccc;
+			}
 		}
 		return $list;
 	}
@@ -238,12 +244,41 @@ class BooksController
 					"field" => "pubyear",
 					"message" => "Attenzione: l'Anno di pubblicazione del libro &egrave; obbligatorio."
 				);
-			}else if(intval($pubyear)<1700)
+			}else if(intval($pubyear)<1700 || intval($pubyear)>date("Y"))
 			{
 				$errors[] = array(
 					"field" => "pubyear",
-					"message" => "Attenzione: l'Anno di pubblicazione non è valido. Deve essere un numero intero maggiore o uguale all'anno 1700."
+					"message" => "Attenzione: l'Anno di pubblicazione non è valido. Deve essere un numero intero maggiore o uguale all'anno 1700 e minore o uguale all'anno corrente, " . date("Y") . "."
 				);
+			}else
+			{
+				$aut_fail = false;
+				foreach($errors as $error)
+					if($error["field"] == "idauthor")
+					{
+						$aut_fail = true;
+						break;
+					}
+				if(!$aut_fail)
+				{
+					$aut_fail2 = false;
+					foreach($idauthor as $ida)
+					{
+						$aaa = FrontController::DbManager()->authorSelect($idauthor);
+						if($aaa != null && $aaa->getBirthDate()->format("Y")>=$pubyear)
+						{
+							$aut_fail2 = true;
+							break;
+						}
+					}
+					if($aut_fail2)
+					{
+						$errors[] = array(
+							"field" => "pubyear",
+							"message" => "Attenzione: l'Anno di pubblicazione è precedente alla data di nascita dell'autore."
+						);
+					}
+				}
 			}
 
 			$editor = Application::cleanInput($_POST["editor"]);
@@ -365,6 +400,13 @@ class BooksController
 		}
 		$page->addDictionary("CategoryOptions", $CategoryOptions);
 
+		$page->addDictionary("title", (isset($title) ? $title : ""));
+		$page->addDictionary("pubyear", (isset($pubyear) ? $pubyear : ""));
+		$page->addDictionary("editor", (isset($editor) ? $editor : ""));
+		$page->addDictionary("price", (isset($price_raw) ? $price_raw : ""));
+		$page->addDictionary("shortdescription", (isset($shortdescription) ? $shortdescription : ""));
+		$page->addDictionary("description", (isset($description) ? $description : ""));
+
 		if(count($errors) > 0)
 		{
 			$page->addMessage(View::MSG_TYPE_ERROR, "Attenzione: ci sono uno o pi&ugrave; errori nel modulo; gli errori sono elencati in dettaglio vicino ai campi corrispondenti nel modulo.");
@@ -438,7 +480,7 @@ class BooksController
 				}
 				if($authors_ok == false)
 				{
-					throw new GeneralException("Purtroppo c'è stato un errore che impatta sulla sicurezza del sito.", GeneralException::ERR_SECURITY, $e);
+					throw new GeneralException("Purtroppo c'è stato un errore che impatta sulla sicurezza del sito.", GeneralException::ERR_SECURITY, null);
 				}
 			}
 
@@ -469,7 +511,7 @@ class BooksController
 				}
 				if($cats_ok == false)
 				{
-					throw new GeneralException("Purtroppo c'è stato un errore che impatta sulla sicurezza del sito.", GeneralException::ERR_SECURITY, $e);
+					throw new GeneralException("Purtroppo c'è stato un errore che impatta sulla sicurezza del sito.", GeneralException::ERR_SECURITY, null);
 				}
 			}
 
@@ -480,12 +522,41 @@ class BooksController
 					"field" => "pubyear",
 					"message" => "Attenzione: l'Anno di pubblicazione del libro &egrave; obbligatorio."
 				);
-			}else if(intval($pubyear)<1700)
+			}else if(intval($pubyear)<1700 || intval($pubyear)>date("Y"))
 			{
 				$errors[] = array(
 					"field" => "pubyear",
-					"message" => "Attenzione: l'Anno di pubblicazione non è valido. Deve essere un numero intero maggiore o uguale all'anno 1700."
+					"message" => "Attenzione: l'Anno di pubblicazione non è valido. Deve essere un numero intero maggiore o uguale all'anno 1700 e minore o uguale all'anno corrente, " . date("Y") . "."
 				);
+			}else
+			{
+				$aut_fail = false;
+				foreach($errors as $error)
+					if($error["field"] == "idauthor")
+					{
+						$aut_fail = true;
+						break;
+					}
+				if(!$aut_fail)
+				{
+					$aut_fail2 = false;
+					foreach($idauthor as $ida)
+					{
+						$aaa = FrontController::DbManager()->authorSelect($idauthor);
+						if($aaa != null && $aaa->getBirthDate()->format("Y")>=$pubyear)
+						{
+							$aut_fail2 = true;
+							break;
+						}
+					}
+					if($aut_fail2)
+					{
+						$errors[] = array(
+							"field" => "pubyear",
+							"message" => "Attenzione: l'Anno di pubblicazione è precedente alla data di nascita dell'autore."
+						);
+					}
+				}
 			}
 
 			$editor = Application::cleanInput($_POST["editor"]);
@@ -497,8 +568,8 @@ class BooksController
 				);
 			}
 
-			$price = Application::cleanInput($_POST["price"]);
-			if($price == "")
+			$price_raw = Application::cleanInput($_POST["price"]);
+			if($price_raw == "")
 			{
 				$errors[] = array(
 					"field" => "price",
@@ -506,7 +577,7 @@ class BooksController
 				);
 			}else
 			{
-				$price = Application::stringToFloat($price);
+				$price = Application::stringToFloat($price_raw);
 				if($price == null || $price == 0)
 				{
 					$errors[] = array(
@@ -525,9 +596,6 @@ class BooksController
 						"field" => "price",
 						"message" => "Attenzione: il Prezzo del libro non pu&ograve; essere negativo; per cortesia inserire un prezzo maggiore o uguale a zero."
 					);
-				}else
-				{					
-					$_POST["price"] = $price;
 				}
 			}
 
@@ -619,12 +687,12 @@ class BooksController
 				$page->addFormError($err["field"], $err["message"]);
 		}
 
-		$page->addDictionary("title", (isset($_POST["title"]) ? $_POST["title"] : $book->getTitle()));
-		$page->addDictionary("pubyear", (isset($_POST["pubyear"]) ? $_POST["pubyear"] : $book->getPubYear()));
-		$page->addDictionary("editor", (isset($_POST["editor"]) ? $_POST["editor"] : $book->getEditor()));
-		$page->addDictionary("price", (isset($_POST["price"]) ? $_POST["price"] : Application::floatToString($book->getPrice())));
-		$page->addDictionary("shortdescription", (isset($_POST["shortdescription"]) ? $_POST["shortdescription"] : $book->getShortDescription()));
-		$page->addDictionary("description", (isset($_POST["description"]) ? $_POST["description"] : $book->getDescription()));
+		$page->addDictionary("title", (isset($title) ? $title : $book->getTitle()));
+		$page->addDictionary("pubyear", (isset($pubyear) ? $pubyear : $book->getPubYear()));
+		$page->addDictionary("editor", (isset($editor) ? $editor : $book->getEditor()));
+		$page->addDictionary("price", (isset($price_raw) ? $price_raw : Application::floatToString($book->getPrice())));
+		$page->addDictionary("shortdescription", (isset($shortdescription) ? $shortdescription : $book->getShortDescription()));
+		$page->addDictionary("description", (isset($description) ? $description : $book->getDescription()));
 
 		$page->addDictionary("backToListLink", FrontController::getUrl("books", "list", null));
 		$page->render();
@@ -665,7 +733,7 @@ class BooksController
 			{
 				$html .= "<br />";
 			}
-			$html .= $author->getName() . " " . $author->getSurname();
+			$html .= "<a href=\"" . FrontController::getUrl("authors", "view", array("id"=>$author->getId())) . "\">" . $author->getName() . " " . $author->getSurname() . "</a>"; // TODO: verificare problemi breadcrumb
 		}
 		$html .= "</dd>";
 		$html .= "<dt class=\"editor\">Casa Editrice</dt>

@@ -10,6 +10,32 @@ class AuthorsController
 {
 	public function indexAction()
 	{
+		$page = new View();
+		$page->setName("index");
+		$page->setPath("authors/index.html");
+		$page->setTemplate("main");
+		$page->setTitle("Autori");
+		$page->setId("authors_index");
+
+		$authors = FrontController::DbManager()->authorsList();
+
+		$page->addBreadcrumb("Autori", null, null);
+
+		if(count($authors) == 0)
+		{
+			$page->AddDictionary("AuthorsList", "Nessun autore a sistema."); // TODO mettere un errore più carino
+		}
+		else
+		{
+			$html = "";
+			foreach($authors as $author)
+			{
+				$html .= self::printAuthorSmallBox($author);
+			}
+			$page->AddDictionary("AuthorsList", $html);
+		}
+
+		$page->render();
 	}
 
 	public function listAction()
@@ -26,14 +52,10 @@ class AuthorsController
 
 		$authors = FrontController::DbManager()->authorsList();
 
-		$page->addBreadcrumb("Amministrazione sito", "/admin/index/", null);
+		$page->addBreadcrumb("Amministrazione sito", FrontController::getUrl("admin", "index", null), null);
 		$page->addBreadcrumb("Gestione autori", null, null);
 
-		$btn_edit = "<a href=\"/authors/edit/id/##-ID-##/\" class=\"button button_edit\" aria-label=\"Modifica la scheda dell'autore ##-Name-##\">Modifica</a>";
-		$btn_delete = "<a href=\"/authors/delete/id/##-ID-##/\" class=\"button button_delete\" aria-label=\"Elimina la scheda dell'autore ##-Name-##\">Elimina</a>";
-		$btn_add = "<a href=\"/authors/add/\" class=\"button button_add\">Aggiungi una nuova scheda autore</a>";
-
-		$page->addDictionary("author_add", $btn_add);
+		$page->addDictionary("author_add", self::buttonAuthorAdd());
 
 		if(count($authors) == 0)
 		{
@@ -54,8 +76,8 @@ class AuthorsController
 					<td scope=\"row\" data-title=\"Lingua madre\">" . $author->getMotherTongue() . "</td>
 					<td data-title=\"Operazioni\">
 						<ul>
-							<li>" . str_replace("##-Name-##", $author->getName() . " " . $author->getSurname(), str_replace("##-ID-##", $author->getId(), $btn_edit)) . "</li>
-							<li>" . str_replace("##-Name-##", $author->getName() . " " . $author->getSurname(), str_replace("##-ID-##", $author->getId(), $btn_delete)) . "</li>
+							<li>" . self::buttonAuthorEdit($author->getId(), $author->getName() . " " . $author->getSurname()) . "</li>
+							<li>" . self::buttonAuthorDelete($author->getId(), $author->getName() . " " . $author->getSurname()) . "</li>
 						</ul>
 					</td>
 				</tr>";
@@ -68,7 +90,40 @@ class AuthorsController
 
 	public function viewAction($id)
 	{
+		$author = FrontController::DbManager()->authorSelect($id);
+		if($author == null)
+			return FrontController::redirect(FrontController::getUrl("index", "notfound"));
+		$books = FrontController::DbManager()->getBooksByAuthor($author->getId());
+		$languages = FrontController::DbManager()->languageList();
+		$mothertongue = $languages[$author->getCodMotherTongue()];
 
+		$page = new View();
+		$page->setName("view");
+		$page->setPath("authors/view.html");
+		$page->setTemplate("main");
+		$page->setTitle("Scheda dell'autore " . $author->getName() . " " . $author->getSurname());
+		$page->setId("authors_view");
+
+		$page->addBreadcrumb("Autori", FrontController::getUrl("authors", "index", null), null);
+		$page->addBreadcrumb($author->getName() . " " . $author->getSurname(), null, null);
+
+		$page->addDictionary("AuthorName", $author->getName());
+		$page->addDictionary("AuthorSurname", $author->getSurname());
+		$page->addDictionary("AuthorPicture", ""); // TODO
+		$page->addDictionary("AuthorBirthDate", $author->getBirthDate()->format("d/m/Y"));
+		$page->addDictionary("AuthorBirthPlace", $author->getBirthPlace());
+		$page->addDictionary("AuthorMotherTongue", $mothertongue);
+		$page->addDictionary("AuthorAdditionalInfo", $author->getAdditionalInfo());
+
+		$books_list = "";
+		foreach($books as $book)
+		{
+			$authors = FrontController::DbManager()->getAuthorsByBook($book->getId());
+			$books_list .= BooksController::printBookSmallBox($book, $authors);
+		}
+		$page->addDictionary("BooksList", $books_list);
+
+		$page->render();
 	}
 
 	public function addAction()
@@ -207,6 +262,12 @@ class AuthorsController
 		$page->addBreadcrumb("Gestione autori", "/authors/list/", null);
 		$page->addBreadcrumb("Aggiungi autore", null, null);
 
+		$page->addDictionary("name", (isset($name) ? $name : ""));
+		$page->addDictionary("surname", (isset($surname) ? $surname : ""));
+		$page->addDictionary("birthdate", (isset($birthdate_raw) ? $birthdate_raw : ""));
+		$page->addDictionary("birthplace", (isset($birthplace) ? $birthplace : ""));
+		$page->addDictionary("additionalinfo", (isset($additionalinfo) ? $additionalinfo : ""));
+
 		$MotherTongueOptions = "";
 		foreach($languages as $codlang => $lang)
 		{
@@ -230,10 +291,10 @@ class AuthorsController
 	public function editAction($id)
 	{
 		if(!AuthController::isAdmin())
-			return FrontController::getFrontController()->redirect("/admin/unauthorized/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("admin", "unauthorized", null));
 
 		if($id == null || $id <= 0)
-			return FrontController::getFrontController()->redirect("/error/general/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("error", "general", null));
 
 		$page = new View();
 		$page->setName("edit");
@@ -241,7 +302,7 @@ class AuthorsController
 		$page->setTemplate("main");
 		$page->setTitle("Amministrazione sito - Gestione Autori");
 		$page->setId("admin_authors_edit");
-		$page->setFormAction("/authors/edit/");
+		$page->setFormAction(FrontController::getUrl("authors", "edit", array("id"=>$id)));
 
 		// Form validation
 		$errors = array();
@@ -357,13 +418,19 @@ class AuthorsController
 					->setMotherTongue($languages[$codmothertongue])
 					->setAdditionalInfo($additionalinfo);
 				FrontController::DbManager()->authorSave($author);
-				return FrontController::getFrontController()->redirect("/authors/list/");
+				return FrontController::getFrontController()->redirect(FrontController::getUrl("authors", "list", null));
 			}
 		}
 
-		$page->addBreadcrumb("Amministrazione sito", "/admin/index/", null);
-		$page->addBreadcrumb("Gestione autori", "/authors/list/", null);
+		$page->addBreadcrumb("Amministrazione sito", FrontController::getUrl("admin", "index", null), null);
+		$page->addBreadcrumb("Gestione autori", FrontController::getUrl("authors", "list", null), null);
 		$page->addBreadcrumb("Modifica autore " . $author->getName() . " " . $author->getSurname(), null, null);
+
+		$page->addDictionary("name", (isset($name) ? $name : $author->getName()));
+		$page->addDictionary("surname", (isset($surname) ? $surname : $author->getSurname()));
+		$page->addDictionary("birthdate", (isset($birthdate_raw) ? $birthdate_raw : $author->getBirthDate()->format("Y-m-d")));
+		$page->addDictionary("birthplace", (isset($birthplace) ? $birthplace : $author->getBirthPlace()));
+		$page->addDictionary("additionalinfo", (isset($additionalinfo) ? $additionalinfo : $author->getAdditionalInfo()));
 
 		$MotherTongueOptions = "";
 		foreach($languages as $codlang => $lang)
@@ -388,13 +455,61 @@ class AuthorsController
 	public function deleteAction($id)
 	{
 		if(!AuthController::isAdmin())
-			return FrontController::getFrontController()->redirect("/admin/unauthorized/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("admin", "unauthorized", null));
 
 		if($id == null || $id <= 0)
-			return FrontController::getFrontController()->redirect("/error/general/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("error", "general", null));
 
 		FrontController::DbManager()->authorDelete($id);
-		return FrontController::getFrontController()->redirect("/authors/list/");
+		return FrontController::getFrontController()->redirect(FrontController::getUrl("authors", "list", null));
 
+	}
+
+	public static function printAuthorSmallBox($author)
+	{
+		$html = "";
+		$html .= "<article class=\"author author_thumbnail\">
+	<h3>" . $author->getName() . " " . $author->getSurname() . "</h3>
+	<figure>
+		<figcaption>Fotografia dell'autore</figcaption>
+		<img src=\"" . $author->getPicture() . "\">
+	</figure>
+	<dl>
+		<dt class=\"name\">Nome</dt>
+			<dd class=\"name\">" . $author->getName() . " " . $author->getSurname() . "</dd>
+		<dt class=\"birthdate\">Data di nascita</dt>
+			<dd class=\"birthdate\">" . $author->getBirthDate()->format("d/m/Y") . "</dd>
+		<dt class=\"birthplace\">Luogo di nascita</dt>
+			<dd class=\"birthplace\">" . $author->getBirthPlace() . "</dd>
+		<dt class=\"mothertongue\">Madrelingua</dt>
+			<dd class=\"mothertongue\">" . $author->getMotherTongue() . "</dd>
+	</dl>
+	<a role=\"button\" href=\"";
+		$html .= FrontController::getUrl("authors", "view", array("id"=>$author->getId()));
+		$html .= "\">Maggiori informazioni</a>
+</article>";
+		return $html;
+	}
+
+	public static function buttonAuthorEdit($id, $label)
+	{
+		$btn_edit = "<a href=\"";
+		$btn_edit .= FrontController::getUrl("authors","edit",array("id"=>$id));
+		$btn_edit .= "\" class=\"button button_edit\" aria-label=\"Modifica la scheda dell'autore " . $label . "\">Modifica</a>";
+		return $btn_edit;
+	}
+	public static function buttonAuthorDelete($id, $label)
+	{
+		$btn_delete = "<a href=\"";
+		$btn_delete .= FrontController::getUrl("authors","delete",array("id"=>$id));
+		$btn_delete .= "\" class=\"button button_delete\" aria-label=\"Elimina la scheda dell'autore " . $label . "\">Elimina</a>";
+		return $btn_delete;
+	}
+	public static function buttonAuthorAdd()
+	{
+		$btn_add = "<a href=\"";
+		$btn_add .= FrontController::getUrl("authors","add",null);
+		$btn_add .= "\" class=\"button button_add\">Aggiungi una nuova scheda autore</a>";
+		return $btn_add;
 	}
 }

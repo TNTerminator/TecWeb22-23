@@ -212,7 +212,7 @@ class DbManager
 					"BirthPlace = ?, " .
 					"CodMotherTongue = ?, " .
 					"AdditionalInfo = ?, " .
-					"TsUpdate = NOW(), " .
+					"TsUpdate = NOW() " .
 				"WHERE IDAuthor = ?"
 			);
 		}catch(mysqli_sql_exception $e)

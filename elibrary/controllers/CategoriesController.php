@@ -224,6 +224,12 @@ class CategoriesController
 					"field" => "name",
 					"message" => "Attenzione: Il Nome della categoria &egrave; obbligatorio."
 				);
+			}else if(!preg_match('/^[-.a-zA-ZáàéèóòíìúùÁÀÉÈÍÌÓÒÚÙ\s]+$/', $name))
+			{
+				$errors[] = array(
+					"field" => "name",
+					"message" => "Attenzione: Il nome deve contenere solamente lettere."
+				);
 			}
 
 			if(count($errors) == 0)
@@ -296,6 +302,12 @@ class CategoriesController
 				$errors[] = array(
 					"field" => "name",
 					"message" => "Attenzione: Il Nome della categoria &egrave; obbligatorio."
+				);
+			}else if(!preg_match('/^[-.a-zA-ZáàéèóòíìúùÁÀÉÈÍÌÓÒÚÙ\s]+$/', $name))
+			{
+				$errors[] = array(
+					"field" => "name",
+					"message" => "Attenzione: Il nome deve contenere solamente lettere."
 				);
 			}
 

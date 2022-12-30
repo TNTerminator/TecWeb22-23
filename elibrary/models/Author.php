@@ -127,4 +127,9 @@ class Author
 	{
 		return $this->_TsUpdate;
 	}
+
+	public function getPicture()
+	{
+		return ""; // TODO
+	}
 }

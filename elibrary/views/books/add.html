@@ -6,7 +6,7 @@
 
 		<div class="field">
 			<label for="title">Titolo</label>
-			<input type="text" name="title" id="title" value="##-Post::title-##" required>
+			<input type="text" name="title" id="title" value="##-Dict::title-##" required>
 			##-FieldError::title-##
 		</div>
 
@@ -30,33 +30,33 @@
 
 		<div class="field">
 			<label for="pubyear">Anno di pubblicazione</label>
-			<input type="number" name="pubyear" id="pubyear" value="##-Post::pubyear-##" required>
+			<input type="number" name="pubyear" id="pubyear" value="##-Dict::pubyear-##" required>
 			##-FieldError::pubyear-##
 		</div>
 
 		<div class="field">
 			<label for="editor">Editore</label>
-			<input type="text" name="editor" id="editor" value="##-Post::editor-##" required>
+			<input type="text" name="editor" id="editor" value="##-Dict::editor-##" required>
 			##-FieldError::editor-##
 		</div>
 
 		<div class="field">
 			<label for="price">Prezzo</label>
-			&euro; <input type="text" name="price" id="price" value="##-Post::price-##" required>
+			&euro; <input type="text" name="price" id="price" value="##-Dict::price-##" required>
 			<p class="field_instructions">Il Prezzo deve essere inserito solamente con cifre, usando la virgola come carattere separatore per i decimali.</p>
 			##-FieldError::price-##
 		</div>
 
 		<div class="field">
 			<label for="shortdescription">Descrizione breve</label>
-			<input type="text" name="shortdescription" id="shortdescription" value="##-Post::shortdescription-##" required>
+			<input type="text" name="shortdescription" id="shortdescription" value="##-Dict::shortdescription-##" required>
 			<p class="field_instructions">La Descrizione breve è un testo minimale, lungo al massimo 100 caratteri, che compare quando il libro viene visualizzato in un elenco di ricerca.</p>
 			##-FieldError::shortdescription-##
 		</div>
 
 		<div class="field">
 			<label for="description">Descrizione estesa</label>
-			<textarea name="description" id="description">##-Post::description-##</textarea>
+			<textarea name="description" id="description">##-Dict::description-##</textarea>
 			<p class="field_instructions">La Descrizione estesa è un testo ampio che descrive il libro ed il suo contenuto e viene visualizzato all'interno della scheda di dettaglio del libro.</p>
 			##-FieldError::description-##
 		</div>

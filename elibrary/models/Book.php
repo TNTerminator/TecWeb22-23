@@ -90,8 +90,10 @@ class Book
 	public function hasIdCategory($id)
 	{
 		foreach($this->_IdCategories as $idcategory)
+		{
 			if($idcategory == $id)
 				return true;
+		}
 		return false;
 	}
 	public function emptyIdCategories()
