@@ -106,3 +106,8 @@ body > footer a:visited {
 	color:#d55358;
 }
 
+
+div.field
+{
+	border-color: blue;
+}
