@@ -15,7 +15,7 @@ class BooksController
 	public function listAction()
 	{
 		if(!AuthController::isAdmin())
-			return FrontController::getFrontController()->redirect("/admin/unauthorized/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("admin", "unauthorized", null));
 
 		$page = new View();
 		$page->setName("list");
@@ -26,7 +26,7 @@ class BooksController
 
 		$books = FrontController::DbManager()->booksList();
 
-		$page->addBreadcrumb("Amministrazione sito", "/admin/index/", null);
+		$page->addBreadcrumb("Amministrazione sito", FrontController::getUrl("admin", "index", null), null);
 		$page->addBreadcrumb("Gestione libri", null, null);
 
 		$page->addDictionary("book_add", self::buttonBookAdd());
@@ -89,7 +89,15 @@ class BooksController
 		$page->addBreadcrumb($book->getTitle(), null, null);
 
 		$page->addDictionary("BookTitle", $book->getTitle());
-		$page->addDictionary("BookCoverPath", ""); // TODO
+		if($book->getCover() != "")
+		{
+			$page->addDictionary("BookCoverPath", FrontController::getAbsoluteUrl(Application::getThumbnail($book->getCover(), 500, 675)));
+			$page->addDictionary("BookCoverCaption", $book->getCoverCaption());
+		}else
+		{
+			$page->addDictionary("BookCoverPath", FrontController::getAbsoluteUrl(Application::getThumbnail("media/notfound.jpg", 500, 675)));
+			$page->addDictionary("BookCoverCaption", "Nessuna immagine di copertina");
+		}
 
 		$bookauthors = "";
 		$f = true;
@@ -147,7 +155,7 @@ class BooksController
 	public function addAction()
 	{
 		if(!AuthController::isAdmin())
-			return FrontController::getFrontController()->redirect("/admin/unauthorized/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("admin", "unauthorized", null));
 
 		$page = new View();
 		$page->setName("add");
@@ -155,13 +163,17 @@ class BooksController
 		$page->setTemplate("main");
 		$page->setTitle("Amministrazione sito - Gestione Libri");
 		$page->setId("admin_books_add");
-		$page->setFormAction("/books/add/");
+		$page->setFormAction(FrontController::getUrl("books", "add", null));
 
 		// Form validation
 		$errors = array();
 
 		$authors = FrontController::DbManager()->authorsList();
 		$categories = $this->categoryTreeToList(FrontController::DbManager()->categoriesTree());
+
+		$uploaderror = false;
+		$cover_file = null;
+		$covercaption = "";
 
 		if(isset($_POST["CMD_Execute"]))
 		{
@@ -175,7 +187,10 @@ class BooksController
 				);
 			}
 
-			$idauthor = Application::cleanInput($_POST["idauthor"]);
+			if(isset($_POST["idauthor"]))
+				$idauthor = Application::cleanInput($_POST["idauthor"]);
+			else
+				$idauthor = array();
 			if(!is_array($idauthor))
 				$idauthor = array($idauthor);
 			if(count($idauthor)==0)
@@ -202,11 +217,14 @@ class BooksController
 				}
 				if($authors_ok == false)
 				{
-					throw new GeneralException("Purtroppo c'è stato un errore che impatta sulla sicurezza del sito.", GeneralException::ERR_SECURITY, $e);
+					throw new GeneralException("Purtroppo c'è stato un errore che impatta sulla sicurezza del sito.", GeneralException::ERR_SECURITY, null);
 				}
 			}
 
-			$idcategory = Application::cleanInput($_POST["idcategory"]);
+			if(isset($_POST["idcategory"]))
+				$idcategory = Application::cleanInput($_POST["idcategory"]);
+			else
+				$idcategory = array();
 			if(!is_array($idcategory))
 				$idcategory = array($idcategory);
 			if(count($idcategory)==0)
@@ -233,7 +251,7 @@ class BooksController
 				}
 				if($cats_ok == false)
 				{
-					throw new GeneralException("Purtroppo c'è stato un errore che impatta sulla sicurezza del sito.", GeneralException::ERR_SECURITY, $e);
+					throw new GeneralException("Purtroppo c'è stato un errore che impatta sulla sicurezza del sito.", GeneralException::ERR_SECURITY, null);
 				}
 			}
 
@@ -264,7 +282,7 @@ class BooksController
 					$aut_fail2 = false;
 					foreach($idauthor as $ida)
 					{
-						$aaa = FrontController::DbManager()->authorSelect($idauthor);
+						$aaa = FrontController::DbManager()->authorSelect($ida);
 						if($aaa != null && $aaa->getBirthDate()->format("Y")>=$pubyear)
 						{
 							$aut_fail2 = true;
@@ -367,13 +385,62 @@ class BooksController
 					$newbook->addIdAuthor($ida);
 				foreach($idcategory as $idc)
 					$newbook->addIdCategory($idc);
-				FrontController::DbManager()->bookSave($newbook);
-				return FrontController::getFrontController()->redirect("/books/list/");
+				$result = FrontController::DbManager()->bookSave($newbook);
+
+				if($result)
+				{
+					if(isset($_FILES["cover"]) && $_FILES["cover"]["name"]!="")
+					{
+						if(!Application::checkUpload($_FILES["cover"]["name"]))
+						{
+							$uploaderror = true;
+							$errors[] = array(
+								"field" => "cover",
+								"message" => "Il formato di immagine caricato non è valido: deve essere GIF, PNG oppure JPEG."
+							);
+						}
+
+						$target_dir = "media/books/" . $newbook->getId();
+						if(!Application::prepareFolder($target_dir))
+						{
+							$uploaderror = true;
+							$errors[] = array(
+								"field" => "cover",
+								"message" => "Problema con l'upload del file, cartella non trovata, prego riprovare."
+							);
+						}else
+						{
+							if (!Application::moveUploadedFile($_FILES["cover"]["tmp_name"], $target_dir, $_FILES["cover"]["name"], true)) 
+							{
+								$uploaderror = true;
+								$errors[] = array(
+									"field" => "cover",
+									"message" => "Problema con l'upload del file, prego riprovare."
+								);
+							}else
+								$cover_file = $target_dir . "/" . $_FILES["cover"]["name"];
+						} 
+					}
+					
+					$covercaption = Application::cleanInput($_POST["covercaption"]);
+					if($covercaption == "" && !$uploaderror)
+					{
+						$errors[] = array(
+							"field" => "covercaption",
+							"message" => "Attenzione: quando viene caricata una immagine di copertina, è obbligatorio inserire anche una didascalia di tale immagine."
+						);
+					}
+					$newbook
+						->setCover($cover_file)
+						->setCoverCaption($covercaption);
+					FrontController::DbManager()->bookSave($newbook);
+					return FrontController::getFrontController()->redirect(FrontController::getUrl("books", "list", null));
+				}
 			}
 		}
 
-		$page->addBreadcrumb("Amministrazione sito", "/admin/index/", null);
-		$page->addBreadcrumb("Gestione libri", "/books/list/", null);
+		$page->addBreadcrumb("Amministrazione sito", FrontController::getUrl("admin", "index", null), null);
+		$page->addBreadcrumb("Gestione libri", FrontController::getUrl("books", "list", null), null);
 		$page->addBreadcrumb("Aggiungi libro", null, null);
 
 		$AuthorOptions = "";
@@ -401,6 +468,7 @@ class BooksController
 		$page->addDictionary("CategoryOptions", $CategoryOptions);
 
 		$page->addDictionary("title", (isset($title) ? $title : ""));
+		$page->addDictionary("covercaption", (isset($covercaption) ? $covercaption : ""));
 		$page->addDictionary("pubyear", (isset($pubyear) ? $pubyear : ""));
 		$page->addDictionary("editor", (isset($editor) ? $editor : ""));
 		$page->addDictionary("price", (isset($price_raw) ? $price_raw : ""));
@@ -440,6 +508,10 @@ class BooksController
 
 		$authors = FrontController::DbManager()->authorsList();
 		$categories = $this->categoryTreeToList(FrontController::DbManager()->categoriesTree());
+
+		$uploaderror = false;
+		$cover_file = $book->getCover();
+		$covercaption = $book->getCoverCaption();
 
 		if(isset($_POST["CMD_Execute"]))
 		{
@@ -542,7 +614,7 @@ class BooksController
 					$aut_fail2 = false;
 					foreach($idauthor as $ida)
 					{
-						$aaa = FrontController::DbManager()->authorSelect($idauthor);
+						$aaa = FrontController::DbManager()->authorSelect($ida);
 						if($aaa != null && $aaa->getBirthDate()->format("Y")>=$pubyear)
 						{
 							$aut_fail2 = true;
@@ -639,8 +711,57 @@ class BooksController
 				$book->emptyIdCategories();
 				foreach($idcategory as $idc)
 					$book->addIdCategory($idc);
-				FrontController::DbManager()->bookSave($book);
-				return FrontController::getFrontController()->redirect("/books/list/");
+				$result = FrontController::DbManager()->bookSave($book);
+
+				if($result)
+				{
+					if(isset($_FILES["cover"]) && $_FILES["cover"]["name"]!="")
+					{
+						if(!Application::checkUpload($_FILES["cover"]["name"]))
+						{
+							$uploaderror = true;
+							$errors[] = array(
+								"field" => "cover",
+								"message" => "Il formato di immagine caricato non è valido: deve essere GIF, PNG oppure JPEG."
+							);
+						}
+
+						$target_dir = "media/books/" . $book->getId();
+						if(!Application::prepareFolder($target_dir))
+						{
+							$uploaderror = true;
+							$errors[] = array(
+								"field" => "cover",
+								"message" => "Problema con l'upload del file, cartella non trovata, prego riprovare."
+							);
+						}else
+						{
+							if (!Application::moveUploadedFile($_FILES["cover"]["tmp_name"], $target_dir, $_FILES["cover"]["name"], true)) 
+							{
+								$uploaderror = true;
+								$errors[] = array(
+									"field" => "cover",
+									"message" => "Problema con l'upload del file, prego riprovare."
+								);
+							}else
+								$cover_file = $target_dir . "/" . $_FILES["cover"]["name"];
+						} 
+					}
+					
+					$covercaption = Application::cleanInput($_POST["covercaption"]);
+					if($covercaption == "" && !$uploaderror)
+					{
+						$errors[] = array(
+							"field" => "covercaption",
+							"message" => "Attenzione: quando viene caricata una immagine di copertina, è obbligatorio inserire anche una didascalia di tale immagine."
+						);
+					}
+					$book
+						->setCover($cover_file)
+						->setCoverCaption($covercaption);
+					FrontController::DbManager()->bookSave($book);
+					return FrontController::getFrontController()->redirect("/books/list/");
+				}
 			}
 		}
 
@@ -687,7 +808,17 @@ class BooksController
 				$page->addFormError($err["field"], $err["message"]);
 		}
 
+		if($cover_file != "")
+		{
+			$html = "<figure><img src=\"" . FrontController::getAbsoluteUrl(Application::getThumbnail($cover_file, 300, 405)) . "\">";
+			if($covercaption != "")
+				$html .= "<figcaption>" . $covercaption . "</figcaption>";
+			$html .= "</figure>";
+			$page->addDictionary("cover_preview", $html);
+		}
+
 		$page->addDictionary("title", (isset($title) ? $title : $book->getTitle()));
+		$page->addDictionary("covercaption", (isset($covercaption) ? $covercaption : $book->getCoverCaption()));
 		$page->addDictionary("pubyear", (isset($pubyear) ? $pubyear : $book->getPubYear()));
 		$page->addDictionary("editor", (isset($editor) ? $editor : $book->getEditor()));
 		$page->addDictionary("price", (isset($price_raw) ? $price_raw : Application::floatToString($book->getPrice())));
@@ -701,13 +832,13 @@ class BooksController
 	public function deleteAction($id)
 	{
 		if(!AuthController::isAdmin())
-			return FrontController::getFrontController()->redirect("/admin/unauthorized/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("admin", "unauthorized", null));
 
 		if($id == null || $id <= 0)
-			return FrontController::getFrontController()->redirect("/error/general/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("error", "general", null));
 
 		FrontController::DbManager()->bookDelete($id);
-		return FrontController::getFrontController()->redirect("/books/list/");
+		return FrontController::getFrontController()->redirect(FrontController::getUrl("books", "list", null));
 
 	}
 
@@ -716,10 +847,17 @@ class BooksController
 		$html = "";
 		$html .= "<article class=\"book book_thumbnail\">
 	<h3>" . $book->getTitle() . "</h3>
-	<figure>
-		<figcaption>Immagine di copertina</figcaption>
-		<img src=\"" . $book->getCover() . "\">
-	</figure>
+	<figure><figcaption>";
+		if($book->getCover() != "")
+			$html .= $book->getCoverCaption();
+		else
+			$html .= "Nessuna immagine di copertina";
+		$html .= "</figcaption><img src=\"";
+		if($book->getCover() != "")
+			$html .= FrontController::getAbsoluteUrl(Application::getThumbnail($book->getCover(), 200, 270));
+		else
+			$html .= FrontController::getAbsoluteUrl(Application::getThumbnail("media/notfound.jpg", 200, 270));
+		$html .= "\" alt=\"Immagine di copertina\"></figure>
 	<dl>
 		<dt class=\"author\">Autore</dt>
 			<dd class=\"author\">";
@@ -727,12 +865,9 @@ class BooksController
 		foreach($authors as $author)
 		{
 			if($f)
-			{
 				$f = false;
-			}else
-			{
+			else
 				$html .= "<br />";
-			}
 			$html .= "<a href=\"" . FrontController::getUrl("authors", "view", array("id"=>$author->getId())) . "\">" . $author->getName() . " " . $author->getSurname() . "</a>"; // TODO: verificare problemi breadcrumb
 		}
 		$html .= "</dd>";

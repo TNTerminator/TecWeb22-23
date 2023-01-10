@@ -221,6 +221,11 @@ class FrontController
 		die();
 	}
 
+	public static function getAbsoluteUrl($path)
+	{
+		return BASE_DIR . "/" . $path;
+	}
+
 	public static function getUrl($controller = null, $action = null, $params = null)
 	{
 		if($action == null || $action == "")
@@ -233,6 +238,6 @@ class FrontController
 			foreach($params as $key => $value)
 				$paramsstr .= $key . "/" . $value . "/";
 
-		return BASE_DIR . "/" . $controller . "/" . $action . "/" . $paramsstr;
+		return self::getAbsoluteUrl($controller . "/" . $action . "/" . $paramsstr);
 	}
 }

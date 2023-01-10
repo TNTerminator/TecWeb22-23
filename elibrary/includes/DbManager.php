@@ -82,6 +82,7 @@ class DbManager
 						->setId($authorassoc["IDAuthor"])
 						->setSurname($authorassoc["Surname"])
 						->setName($authorassoc["Name"])
+						->setPicture($authorassoc["Picture"])
 						->setBirthDate($BirthDate)
 						->setBirthPlace($authorassoc["BirthPlace"])
 						->setCodMotherTongue($authorassoc["CodMotherTongue"])
@@ -131,6 +132,7 @@ class DbManager
 					->setId($authorassoc["IDAuthor"])
 					->setSurname($authorassoc["Surname"])
 					->setName($authorassoc["Name"])
+					->setPicture($authorassoc["Picture"])
 					->setBirthDate($BirthDate)
 					->setBirthPlace($authorassoc["BirthPlace"])
 					->setCodMotherTongue($authorassoc["CodMotherTongue"])
@@ -170,11 +172,12 @@ class DbManager
 				"INSERT INTO authors (" . 
 					"Surname, " .
 					"Name, " .
+					"Picture, " .
 					"BirthDate, " .
 					"BirthPlace, " .
 					"CodMotherTongue, " .
 					"AdditionalInfo " .
-				") VALUES (?, ?, ?, ?, ?, ?)"
+				") VALUES (?, ?, ?, ?, ?, ?, ?)"
 			);
 		}catch(mysqli_sql_exception $e)
 		{
@@ -183,7 +186,14 @@ class DbManager
 		
 		try
 		{
-			$stmt->bind_param("ssssss", $author->getSurname(), $author->getName(), $author->getBirthDate()->format("Y-m-d"), $author->getBirthPlace(), $author->getCodMotherTongue(), $author->getAdditionalInfo());
+			$surname = $author->getSurname();
+			$name = $author->getName();
+			$picture = $author->getPicture();
+			$birthdate = $author->getBirthDate()->format("Y-m-d");
+			$birthplace = $author->getBirthPlace();
+			$codmothertongue = $author->getCodMotherTongue();
+			$additionalinfo = $author->getAdditionalInfo();
+			$stmt->bind_param("sssssss", $surname, $name, $picture, $birthdate, $birthplace, $codmothertongue, $additionalinfo);
 			$stmt->execute();
 			$author->setId($this->Connection()->insert_id);
 		}catch(mysqli_sql_exception $e)
@@ -208,6 +218,7 @@ class DbManager
 				"UPDATE authors SET " . 
 					"Surname = ?, " .
 					"Name = ?, " .
+					"Picture = ?, " .
 					"BirthDate = ?, " .
 					"BirthPlace = ?, " .
 					"CodMotherTongue = ?, " .
@@ -222,7 +233,15 @@ class DbManager
 		
 		try
 		{
-			@$stmt->bind_param("ssssssi", $author->getSurname(), $author->getName(), $author->getBirthDate(), $author->getBirthPlace(), $author->getCodMotherTongue(), $author->getAdditionalInfo(), $author->getId());
+			$id = $author->getId();
+			$surname = $author->getSurname();
+			$name = $author->getName();
+			$picture = $author->getPicture();
+			$birthdate = $author->getBirthDate()->format("Y-m-d");
+			$birthplace = $author->getBirthPlace();
+			$codmothertongue = $author->getCodMotherTongue();
+			$additionalinfo = $author->getAdditionalInfo();
+			$stmt->bind_param("sssssssi", $surname, $name, $picture, $birthdate, $birthplace, $codmothertongue, $additionalinfo, $id);
 			$stmt->execute();
 		}catch(mysqli_sql_exception $e)
 		{
@@ -290,6 +309,8 @@ class DbManager
 					$book
 						->setId($bookassoc["IDBook"])
 						->setTitle($bookassoc["Title"])
+						->setCover($bookassoc["Cover"])
+						->setCoverCaption($bookassoc["CoverCaption"])
 						->setPubYear($bookassoc["PubYear"])
 						->setEditor($bookassoc["Editor"])
 						->setPrice($bookassoc["Price"])
@@ -334,6 +355,8 @@ class DbManager
 				$book
 					->setId($bookassoc["IDBook"])
 					->setTitle($bookassoc["Title"])
+					->setCover($bookassoc["Cover"])
+					->setCoverCaption($bookassoc["CoverCaption"])
 					->setPubYear($bookassoc["PubYear"])
 					->setEditor($bookassoc["Editor"])
 					->setPrice($bookassoc["Price"])
@@ -422,21 +445,25 @@ class DbManager
 			$stmt = $this->Connection()->prepare(
 				"INSERT INTO books (" . 
 					"Title," .
+					"Cover," . 
+					"CoverCaption," . 
 					"PubYear," .
 					"Editor," .
 					"Price," . 
 					"ShortDescription," . 
 					"Description," .
 					"TsCreate" . 
-				") VALUES (?, ?, ?, ?, ?, ?, NOW())"
+				") VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())"
 			);
 			$title = $book->getTitle();
+			$cover = $book->getCover();
+			$covercaption = $book->getCoverCaption();
 			$pubyear = $book->getPubYear();
 			$editor = $book->getEditor();
 			$price = $book->getPrice();
 			$shortdesc = $book->getShortDescription();
 			$desc = $book->getDescription();
-			$stmt->bind_param("sisdss", $title, $pubyear, $editor, $price, $shortdesc, $desc);
+			$stmt->bind_param("sssisdss", $title, $cover, $covercaption, $pubyear, $editor, $price, $shortdesc, $desc);
 			$stmt->execute();
 			$book->setId($this->Connection()->insert_id);
 		}catch(mysqli_sql_exception $e)
@@ -459,6 +486,8 @@ class DbManager
 			$stmt = $this->Connection()->prepare(
 				"UPDATE books SET " .
 					"Title = ?," .
+					"Cover = ?," .
+					"CoverCaption = ?," .
 					"PubYear = ?," . 
 					"Editor = ?," . 
 					"Price = ?," .
@@ -469,12 +498,14 @@ class DbManager
 			);
 			$id = $book->getId();
 			$title = $book->getTitle();
+			$cover = $book->getCover();
+			$covercaption = $book->getCoverCaption();
 			$pubyear = $book->getPubYear();
 			$editor = $book->getEditor();
 			$price = $book->getPrice();
 			$shortdesc = $book->getShortDescription();
 			$desc = $book->getDescription();
-			$stmt->bind_param("sisdssi", $title, $pubyear, $editor, $price, $shortdesc, $desc, $id);
+			$stmt->bind_param("sssisdssi", $title, $cover, $covercaption, $pubyear, $editor, $price, $shortdesc, $desc, $id);
 			$stmt->execute();
 		}catch(mysqli_sql_exception $e)
 		{
@@ -1086,6 +1117,7 @@ class DbManager
 						->setId($authorassoc["IDAuthor"])
 						->setSurname($authorassoc["Surname"])
 						->setName($authorassoc["Name"])
+						->setPicture($authorassoc["Picture"])
 						->setBirthDate($BirthDate)
 						->setBirthPlace($authorassoc["BirthPlace"])
 						->setCodMotherTongue($authorassoc["CodMotherTongue"])
@@ -1131,6 +1163,8 @@ class DbManager
 					$book
 						->setId($bookassoc["IDBook"])
 						->setTitle($bookassoc["Title"])
+						->setCover($bookassoc["Cover"])
+						->setCoverCaption($bookassoc["CoverCaption"])
 						->setPubYear($bookassoc["PubYear"])
 						->setEditor($bookassoc["Editor"])
 						->setPrice($bookassoc["Price"])
@@ -1174,6 +1208,8 @@ class DbManager
 					$book
 						->setId($bookassoc["IDBook"])
 						->setTitle($bookassoc["Title"])
+						->setCover($bookassoc["Cover"])
+						->setCoverCaption($bookassoc["CoverCaption"])
 						->setPubYear($bookassoc["PubYear"])
 						->setEditor($bookassoc["Editor"])
 						->setPrice($bookassoc["Price"])
@@ -1213,6 +1249,8 @@ class DbManager
 					$book
 						->setId($bookassoc["IDBook"])
 						->setTitle($bookassoc["Title"])
+						->setCover($bookassoc["Cover"])
+						->setCoverCaption($bookassoc["CoverCaption"])
 						->setPubYear($bookassoc["PubYear"])
 						->setEditor($bookassoc["Editor"])
 						->setPrice($bookassoc["Price"])
@@ -1252,6 +1290,8 @@ class DbManager
 					$book
 						->setId($bookassoc["IDBook"])
 						->setTitle($bookassoc["Title"])
+						->setCover($bookassoc["Cover"])
+						->setCoverCaption($bookassoc["CoverCaption"])
 						->setPubYear($bookassoc["PubYear"])
 						->setEditor($bookassoc["Editor"])
 						->setPrice($bookassoc["Price"])
@@ -1291,6 +1331,8 @@ class DbManager
 					$book
 						->setId($bookassoc["IDBook"])
 						->setTitle($bookassoc["Title"])
+						->setCover($bookassoc["Cover"])
+						->setCoverCaption($bookassoc["CoverCaption"])
 						->setPubYear($bookassoc["PubYear"])
 						->setEditor($bookassoc["Editor"])
 						->setPrice($bookassoc["Price"])

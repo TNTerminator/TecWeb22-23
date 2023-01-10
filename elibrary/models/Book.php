@@ -229,9 +229,26 @@ class Book
 		return $this->_TsUpdate;
 	}
 
+	private $_cover;
+	public function setCover($path)
+	{
+		$this->_cover = $path;
+		return $this;
+	}
 	public function getCover()
 	{
-		return ""; // TODO
+		return $this->_cover;
+	}
+
+	private $_covercaption;
+	public function setCoverCaption($caption)
+	{
+		$this->_covercaption = $caption;
+		return $this;
+	}
+	public function getCoverCaption()
+	{
+		return $this->_covercaption;
 	}
 
 	public static function getRatingText($rating)

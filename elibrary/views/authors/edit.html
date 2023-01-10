@@ -1,5 +1,5 @@
 <h3>Modifica la scheda dell'autore ##-Dict:author_fullname-##</h3>
-<form method="post" action="##-View::FormAction-##" id="authors-add-form">
+<form method="post" action="##-View::FormAction-##" id="authors-add-form" enctype="multipart/form-data">
 	##-View::Messages-##
 	<fieldset>
 		<legend>Scheda autore</legend>
@@ -14,6 +14,14 @@
 			<label for="surname">Cognome</label>
 			<input type="text" name="surname" id="surname" value="##-Dict::surname-##" required>
 			##-FieldError::surname-##
+		</div>
+
+		<div class="field">
+			<label for="cover">Foto dell'autore</label>
+			##-Dict::picture_preview-##
+			<input type="file" name="picture" id="picture">
+			##-FieldError::picture-##
+			<!-- TODO field instructions -->
 		</div>
 
 		<div class="field">

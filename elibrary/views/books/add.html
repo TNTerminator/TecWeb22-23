@@ -1,5 +1,5 @@
 <h3>Aggiungi una nuova scheda libro</h3>
-<form method="post" action="##-View::FormAction-##" id="books-add-form">
+<form method="post" action="##-View::FormAction-##" id="books-add-form" enctype="multipart/form-data">
 	##-View::Messages-##
 	<fieldset>
 		<legend>Scheda libro</legend>
@@ -11,9 +11,23 @@
 		</div>
 
 		<div class="field">
+			<label for="cover">Immagine di copertina</label>
+			<input type="file" name="cover" id="cover">
+			##-FieldError::cover-##
+			<!-- TODO field instructions -->
+		</div>
+
+		<div class="field">
+			<label for="covercaption">Didascalia immagine di copertina</label>
+			<input type="text" name="covercaption" id="covercaption" value="##-Dict::covercaption-##">
+			##-FieldError::covercaption-##
+			<!-- TODO field instructions -->
+		</div>
+
+		<div class="field">
 			<label for="idauthor">Autore</label>
 			<select name="idauthor">
-				<option>Selezionare un autore dall'elenco...</option>
+				<option value="">Selezionare un autore dall'elenco...</option>
 				##-Dict::AuthorOptions-##
 			</select>
 			##-FieldError::idauthor-##
@@ -22,7 +36,7 @@
 		<div class="field">
 			<label for="idcategory">Categoria</label>
 			<select name="idcategory">
-				<option>Selezionare una categoria dall'elenco...</option>
+				<option value="">Selezionare una categoria dall'elenco...</option>
 				##-Dict::CategoryOptions-##
 			</select>
 			##-FieldError::idcategory-##

@@ -41,7 +41,7 @@ class AuthorsController
 	public function listAction()
 	{
 		if(!AuthController::isAdmin())
-			return FrontController::getFrontController()->redirect("/admin/unauthorized/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("admin", "unauthorized", null));
 
 		$page = new View();
 		$page->setName("list");
@@ -109,7 +109,10 @@ class AuthorsController
 
 		$page->addDictionary("AuthorName", $author->getName());
 		$page->addDictionary("AuthorSurname", $author->getSurname());
-		$page->addDictionary("AuthorPicture", ""); // TODO
+		if($author->getPicture() != "")
+			$page->addDictionary("AuthorPicture", FrontController::getAbsoluteUrl(Application::getThumbnail($author->getPicture(), 500, 675)));
+		else
+			$page->addDictionary("AuthorPicture", FrontController::getAbsoluteUrl(Application::getThumbnail("media/notfound.jpg", 500, 675)));
 		$page->addDictionary("AuthorBirthDate", $author->getBirthDate()->format("d/m/Y"));
 		$page->addDictionary("AuthorBirthPlace", $author->getBirthPlace());
 		$page->addDictionary("AuthorMotherTongue", $mothertongue);
@@ -129,7 +132,7 @@ class AuthorsController
 	public function addAction()
 	{
 		if(!AuthController::isAdmin())
-			return FrontController::getFrontController()->redirect("/admin/unauthorized/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("admin", "unauthorized", null));
 
 		$page = new View();
 		$page->setName("add");
@@ -137,13 +140,14 @@ class AuthorsController
 		$page->setTemplate("main");
 		$page->setTitle("Amministrazione sito - Gestione Autori");
 		$page->setId("admin_authors_add");
-		$page->setFormAction("/authors/add/");
+		$page->setFormAction(FrontController::getUrl("authors", "add", null));
 
 		// Form validation
 		$errors = array();
 
 		$languages = FrontController::DbManager()->languageList();
 		$codmothertongue = "";
+		$picture_file = null;
 
 		if(isset($_POST["CMD_Execute"]))
 		{
@@ -253,13 +257,52 @@ class AuthorsController
 					->setCodMotherTongue($codmothertongue)
 					->setMotherTongue($languages[$codmothertongue])
 					->setAdditionalInfo($additionalinfo);
-				FrontController::DbManager()->authorSave($newauthor);
-				return FrontController::getFrontController()->redirect("/authors/list/");
+				$result = FrontController::DbManager()->authorSave($newauthor);
+
+				if($result)
+				{
+					if(isset($_FILES["picture"]) && $_FILES["picture"]["name"]!="")
+					{
+						if(!Application::checkUpload($_FILES["picture"]["name"]))
+						{
+							$uploaderror = true;
+							$errors[] = array(
+								"field" => "picture",
+								"message" => "Il formato di immagine caricato non è valido: deve essere GIF, PNG oppure JPEG."
+							);
+						}
+
+						$target_dir = "media/author/" . $newauthore->getId();
+						if(!Application::prepareFolder($target_dir))
+						{
+							$uploaderror = true;
+							$errors[] = array(
+								"field" => "picture",
+								"message" => "Problema con l'upload del file, cartella non trovata, prego riprovare."
+							);
+						}else
+						{
+							if (!Application::moveUploadedFile($_FILES["picture"]["tmp_name"], $target_dir, $_FILES["picture"]["name"], true)) 
+							{
+								$uploaderror = true;
+								$errors[] = array(
+									"field" => "picture",
+									"message" => "Problema con l'upload del file, prego riprovare."
+								);
+							}else
+								$picture_file = $target_dir . "/" . $_FILES["picture"]["name"];
+						} 
+					}
+					$newauthor->setPicture($picture_file);
+					FrontController::DbManager()->authoreSave($newauthor);
+					return FrontController::getFrontController()->redirect(FrontController::getUrl("authors", "list", null));
+				}
+
 			}
 		}
 
-		$page->addBreadcrumb("Amministrazione sito", "/admin/index/", null);
-		$page->addBreadcrumb("Gestione autori", "/authors/list/", null);
+		$page->addBreadcrumb("Amministrazione sito", FrontController::getUrl("admin", "index", null), null);
+		$page->addBreadcrumb("Gestione autori", FrontController::getUrl("authors", "list", null), null);
 		$page->addBreadcrumb("Aggiungi autore", null, null);
 
 		$page->addDictionary("name", (isset($name) ? $name : ""));
@@ -310,6 +353,8 @@ class AuthorsController
 		$author = FrontController::DbManager()->authorSelect($id);
 		$languages = FrontController::DbManager()->languageList();
 		$codmothertongue = $author->getCodMotherTongue();
+
+		$picture_file = $author->getPicture();
 
 		if(isset($_POST["CMD_Execute"]))
 		{
@@ -417,8 +462,46 @@ class AuthorsController
 					->setCodMotherTongue($codmothertongue)
 					->setMotherTongue($languages[$codmothertongue])
 					->setAdditionalInfo($additionalinfo);
-				FrontController::DbManager()->authorSave($author);
-				return FrontController::getFrontController()->redirect(FrontController::getUrl("authors", "list", null));
+				$result = FrontController::DbManager()->authorSave($author);
+
+				if($result)
+				{
+					if(isset($_FILES["picture"]) && $_FILES["picture"]["name"]!="")
+					{
+						if(!Application::checkUpload($_FILES["picture"]["name"]))
+						{
+							$uploaderror = true;
+							$errors[] = array(
+								"field" => "picture",
+								"message" => "Il formato di immagine caricato non è valido: deve essere GIF, PNG oppure JPEG."
+							);
+						}
+
+						$target_dir = "media/authors/" . $author->getId();
+						if(!Application::prepareFolder($target_dir))
+						{
+							$uploaderror = true;
+							$errors[] = array(
+								"field" => "picture",
+								"message" => "Problema con l'upload del file, cartella non trovata, prego riprovare."
+							);
+						}else
+						{
+							if (!Application::moveUploadedFile($_FILES["picture"]["tmp_name"], $target_dir, $_FILES["picture"]["name"], true)) 
+							{
+								$uploaderror = true;
+								$errors[] = array(
+									"field" => "picture",
+									"message" => "Problema con l'upload del file, prego riprovare."
+								);
+							}else
+								$picture_file = $target_dir . "/" . $_FILES["picture"]["name"];
+						} 
+					}
+					$author->setPicture($picture_file);
+					FrontController::DbManager()->authorSave($author);
+					return FrontController::getFrontController()->redirect(FrontController::getUrl("authors", "list", null));
+				}
 			}
 		}
 
@@ -449,6 +532,13 @@ class AuthorsController
 				$page->addFormError($err["field"], $err["message"]);
 		}
 
+		if($picture_file != "")
+		{
+			$html = "<figure><img src=\"" . FrontController::getAbsoluteUrl(Application::getThumbnail($picture_file, 300, 405)) . "\">";
+			$html .= "</figure>";
+			$page->addDictionary("picture_preview", $html);
+		}
+
 		$page->render();
 	}
 
@@ -472,7 +562,13 @@ class AuthorsController
 	<h3>" . $author->getName() . " " . $author->getSurname() . "</h3>
 	<figure>
 		<figcaption>Fotografia dell'autore</figcaption>
-		<img src=\"" . $author->getPicture() . "\">
+		<img src=\"";
+		
+		if($author->getPicture() != "")
+			$html .= FrontController::getAbsoluteUrl(Application::getThumbnail($author->getPicture(), 200, 270));
+		else
+			$html .= FrontController::getAbsoluteUrl(Application::getThumbnail("media/notfound.jpg", 200, 270));
+		$html .= "\">
 	</figure>
 	<dl>
 		<dt class=\"name\">Nome</dt>

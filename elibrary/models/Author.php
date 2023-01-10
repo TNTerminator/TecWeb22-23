@@ -42,6 +42,17 @@ class Author
 		return $this->_Surname;
 	}
 
+	private $_picture;
+	public function setPicture($path)
+	{
+		$this->_picture = $path;
+		return $this;
+	}
+	public function getPicture()
+	{
+		return $this->_picture;
+	}
+
 	private $_BirthDate;
 	public function setBirthDate($birthdate)
 	{
@@ -126,10 +137,5 @@ class Author
 	public function getTsUpdate()
 	{
 		return $this->_TsUpdate;
-	}
-
-	public function getPicture()
-	{
-		return ""; // TODO
 	}
 }

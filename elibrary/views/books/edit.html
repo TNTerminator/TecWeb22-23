@@ -1,6 +1,6 @@
 <h3>Modifica la scheda del libro ##-Dict::book_title-##</h3>
 <p><a href="##-Dict::backToListLink-##">Torna indietro</a> all'elenco delle schede libro</p>
-<form method="post" action="##-View::FormAction-##" id="books-add-form">
+<form method="post" action="##-View::FormAction-##" id="books-add-form" enctype="multipart/form-data">
 	##-View::Messages-##
 	<fieldset>
 		<legend>Scheda libro</legend>
@@ -12,9 +12,24 @@
 		</div>
 
 		<div class="field">
+			<label for="cover">Immagine di copertina</label>
+			##-Dict::cover_preview-##
+			<input type="file" name="cover" id="cover">
+			##-FieldError::cover-##
+			<!-- TODO field instructions -->
+		</div>
+
+		<div class="field">
+			<label for="covercaption">Didascalia immagine di copertina</label>
+			<input type="text" name="covercaption" id="covercaption" value="##-Dict::covercaption-##">
+			##-FieldError::covercaption-##
+			<!-- TODO field instructions -->
+		</div>
+
+		<div class="field">
 			<label for="idauthor">Autore</label>
 			<select name="idauthor">
-				<option>Selezionare un autore dall'elenco...</option>
+				<option value="">Selezionare un autore dall'elenco...</option>
 				##-Dict::AuthorOptions-##
 			</select>
 			##-FieldError::idauthor-##
@@ -23,7 +38,7 @@
 		<div class="field">
 			<label for="idcategory">Categoria</label>
 			<select name="idcategory">
-				<option>Selezionare una categoria dall'elenco...</option>
+				<option value="">Selezionare una categoria dall'elenco...</option>
 				##-Dict::CategoryOptions-##
 			</select>
 			##-FieldError::idcategory-##
@@ -43,7 +58,7 @@
 
 		<div class="field">
 			<label for="price">Prezzo</label>
-			&euro; <input type="text" name="price" id="price" value="##-Dict::price-##" required>
+			<input type="text" name="price" id="price" value="##-Dict::price-##" required>
 			<p class="field_instructions">Il Prezzo deve essere inserito solamente con cifre, usando la virgola come carattere separatore per i decimali.</p>
 			##-FieldError::price-##
 		</div>
