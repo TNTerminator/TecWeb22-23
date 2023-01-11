@@ -14,7 +14,7 @@
     },
     ".htaccess": {
       "type": "-",
-      "size": 404,
+      "size": 116,
       "lmtime": 0,
       "modified": true
     },
@@ -23,7 +23,7 @@
     "controllers": {},
     "error_log": {
       "type": "-",
-      "size": 58945,
+      "size": 63151,
       "lmtime": 0,
       "modified": true
     },
