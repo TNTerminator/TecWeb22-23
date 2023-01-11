@@ -16,6 +16,7 @@ form fieldset legend
 div.field
 {
 	border: 1px solid;
+	border-radius: 12px;
 	margin: 3em;
 	position:relative;
 }
