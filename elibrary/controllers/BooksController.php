@@ -152,7 +152,7 @@ class BooksController
 		return $list;
 	}
 
-	public function addAction()
+	public function addAction() 
 	{
 		if(!AuthController::isAdmin())
 			return FrontController::getFrontController()->redirect(FrontController::getUrl("admin", "unauthorized", null));
@@ -488,10 +488,10 @@ class BooksController
 	public function editAction($id)
 	{
 		if(!AuthController::isAdmin())
-			return FrontController::getFrontController()->redirect("/admin/unauthorized/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("admin", "unauthorized", null));
 
 		if($id == null || $id <= 0)
-			return FrontController::getFrontController()->redirect("/error/general/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("error", "general", null));
 
 		$page = new View();
 		$page->setName("edit");
@@ -499,7 +499,7 @@ class BooksController
 		$page->setTemplate("main");
 		$page->setTitle("Amministrazione sito - Gestione Libri");
 		$page->setId("admin_books_edit");
-		$page->setFormAction("/books/edit/id/" . $id . "/");
+		$page->setFormAction(FrontController::getUrl("books", "edit", array("id"=>$id)));
 
 		// Form validation
 		$errors = array();
@@ -760,13 +760,13 @@ class BooksController
 						->setCover($cover_file)
 						->setCoverCaption($covercaption);
 					FrontController::DbManager()->bookSave($book);
-					return FrontController::getFrontController()->redirect("/books/list/");
+					return FrontController::getFrontController()->redirect(FrontController::getUrl("books", "list", null));
 				}
 			}
 		}
 
-		$page->addBreadcrumb("Amministrazione sito", "/admin/index/", null);
-		$page->addBreadcrumb("Gestione libri", "/books/list/", null);
+		$page->addBreadcrumb("Amministrazione sito", FrontController::getUrl("admin", "index", null), null);
+		$page->addBreadcrumb("Gestione libri", FrontController::getUrl("books", "list", null), null);
 		$page->addBreadcrumb("Modifica libro " . $book->getTitle(), null, null);
 
 		$AuthorOptions = "";
