@@ -1,0 +1,67 @@
+
+form fieldset
+{
+	border-radius: 15px;
+	background-color: #0066cb;
+	border:1px solid #00264b;
+}
+form fieldset legend
+{
+	background-color: #0066cb;
+	border:1px solid #00264b;
+	margin: 0 auto;
+}
+
+
+div.field
+{
+	border: 1px solid;
+	margin: 3em;
+	position:relative;
+}
+
+div.field label
+{
+	display:block;
+}
+div.field input,
+div.field textarea
+{
+	display:block;
+}
+div.field textarea
+{
+	width: 100%;
+	min-height: 8em;
+}
+
+div.field input,
+div.field textarea,
+div.field select
+{
+	border-radius: 15px;
+}
+div.field input#price:before
+{
+    content: "&euro; ";
+    width: 3em;
+    height: 1em;
+    background-color: blue;
+}
+
+div.field .field_instructions
+{
+	position: absolute;
+	top:0;
+	right:0;
+	float:right;
+	background-color:coral;
+}
+
+div.field ul.fielderrors
+{
+	list-style: none;
+	padding:0;
+	border: 2px solid red;
+	color:red;
+}

@@ -80,7 +80,7 @@ footer
 
 main section
 {
-	clear:left;
+clear:left;
 }
 
 footer
@@ -93,62 +93,13 @@ footer
 
 article.book_thumbnail
 {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-	background-color: lightgrey;
+	background-color: lightgrey; /*immagine libro come sfondo*/
   	width: 15em;
   	border: 1px solid #0066cb;
 	border-radius: 15px;
   	padding: 1em;
  	margin: 1em;
-	text-align: left;
 	float:left; 
-}
-
-article.book_thumbnail h3 {
-	text-align: center;
-}
-
-article.book_thumbnail figure {
-	width: 100%;
-}
-
-article.book_thumbnail#author {
-	font-size: 15px;
-}
-
-article.book_thumbnail.editor {
-	font-size: 15px;
-}
-
-article.book_thumbnail.pubdate {
-	font-size: 15px;
-}
-
-article.book_thumbnail.price {
-	font-size: 15px;
-}
-
-article.book_thumbnail.sold_quantity {
-	font-size: 15px;
-}
-
-article.book_thumbnail.rating {
-	font-size: 15px;
-}
-
-article.book_thumbnail.p {
-	font-size: 15px;
-	text-align: justify;
-}
-
-article.book_thumbnail.a {
-  	padding: 12px;
-  	color: white;
-  	background-color: #000;
-  	text-align: center;
-  	cursor: pointer;
-  	width: 100%;
-  	font-size: 18px;
 }
 
 @media only screen and (max-width: 600px) 
@@ -226,7 +177,7 @@ article.book_thumbnail.a {
 
 	body > footer
 	{
-		clear: left;
+		clear: left;                               /*PRE: CHECK (a cosa serve????/non dovrebbe essere body > nav???)*/
 	}
 
 	footer
@@ -236,24 +187,29 @@ article.book_thumbnail.a {
 		height: 10em;
 	}
 
+	footer > p
+	{
+		position:absolute;
+		top:50%;
+		margin: -1em 0 0 2em;
+		padding:0 0 0 2em;
+		border-left: 1px solid #ffffff;
+	}
+
 	footer > section#footerSection1 
 	{
-		margin-top: 3.5em;
-		margin-left: 0.5em;
-		width: 45%;
+		width: 50%;
 		float: left;
 	}
 
 	footer > section#footerSection2
 	{
-		margin-top: 3.5em;
 		width: 20%;
 		float: left;
 	}
 
 	footer > section#footerSection3
 	{
-		margin-top: 1.5em;
 		width: 30%;
 		float: right;
 	}
