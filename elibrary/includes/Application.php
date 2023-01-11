@@ -13,7 +13,6 @@ require_once("includes/GeneralException.php");
 require_once("includes/DbException.php");
 require_once("includes/DbManager.php");
 require_once("includes/View.php");
-require_once("includes/createThumbnail.php");
 require_once("models/Author.php");
 require_once("models/Book.php");
 require_once("models/Category.php");
