@@ -284,19 +284,194 @@ class DbManager
 		return true;
 	}
 
+	public function booksSearchFullText($searchstring)
+	{
+		$books = array();
+		$searchstring_like = "%".$searchstring."%";
+		
+		try
+		{
+			if($searchstring == null || $searchstring == "")
+				return $books;
+
+			$sqlstring = "SELECT * FROM books WHERE Title LIKE ?";
+			$stmt = $this->Connection()->prepare($sqlstring);
+			$stmt->bind_param("s", $searchstring_like);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{ 
+				while($bookassoc = $result->fetch_assoc())
+				{
+					$TsCreate = DateTime::createFromFormat("Y-m-d H:i:s", $bookassoc["TsCreate"]);
+					$TsUpdate = DateTime::createFromFormat("Y-m-d H:i:s", $bookassoc["TsUpdate"]);
+					$book = new Book();
+					$book
+						->setId($bookassoc["IDBook"])
+						->setTitle($bookassoc["Title"])
+						->setCover($bookassoc["Cover"])
+						->setCoverCaption($bookassoc["CoverCaption"])
+						->setPubYear($bookassoc["PubYear"])
+						->setEditor($bookassoc["Editor"])
+						->setPrice($bookassoc["Price"])
+						->setRatingValue($bookassoc["RatingValue"])
+						->setRatingCount($bookassoc["RatingCount"])
+						->setSoldQuantity($bookassoc["SoldQuantity"])
+						->setShortDescription($bookassoc["ShortDescription"])
+						->setDescription($bookassoc["Description"])
+						->setTsCreate($TsCreate)
+						->setTsUpdate($TsUpdate);
+					$books[$book->getId()] = $book;
+				}
+			}
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement 1 ".__FUNCTION__." ha fallito l'execute: " . (isset($stmt) ? htmlspecialchars($stmt->error) : "no error object") . " " . print_r($e->getTrace(), true), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			if(isset($result))
+				$result->close();
+			if(isset($stmt))		
+				$stmt->close();
+		}
+		try
+		{
+			$sqlstring = "SELECT * FROM books INNER JOIN books_categories ON books.IDBook = books_categories.IDBook WHERE IDCategory IN (SELECT IDCategory FROM categories WHERE Name LIKE ?)";
+			$stmt = $this->Connection()->prepare($sqlstring);
+			$stmt->bind_param("s", $searchstring_like);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{ 
+				while($bookassoc = $result->fetch_assoc())
+				{
+					$TsCreate = DateTime::createFromFormat("Y-m-d H:i:s", $bookassoc["TsCreate"]);
+					$TsUpdate = DateTime::createFromFormat("Y-m-d H:i:s", $bookassoc["TsUpdate"]);
+					$book = new Book();
+					$book
+						->setId($bookassoc["IDBook"])
+						->setTitle($bookassoc["Title"])
+						->setCover($bookassoc["Cover"])
+						->setCoverCaption($bookassoc["CoverCaption"])
+						->setPubYear($bookassoc["PubYear"])
+						->setEditor($bookassoc["Editor"])
+						->setPrice($bookassoc["Price"])
+						->setRatingValue($bookassoc["RatingValue"])
+						->setRatingCount($bookassoc["RatingCount"])
+						->setSoldQuantity($bookassoc["SoldQuantity"])
+						->setShortDescription($bookassoc["ShortDescription"])
+						->setDescription($bookassoc["Description"])
+						->setTsCreate($TsCreate)
+						->setTsUpdate($TsUpdate);
+					$books[$book->getId()] = $book;
+				}
+			}
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement 2 ".__FUNCTION__." ha fallito l'execute: " . (isset($stmt) ? htmlspecialchars($stmt->error) : "no error object"), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			if(isset($result))
+				$result->close();
+			if(isset($stmt))		
+				$stmt->close();
+		}
+		try
+		{
+			$sqlstring = "SELECT * FROM books INNER JOIN books_authors ON books.IDBook = books_authors.IDBook WHERE IDAuthor IN (SELECT IDAuthor FROM authors WHERE MATCH(Surname, Name) AGAINST (? IN NATURAL LANGUAGE MODE))";
+			$stmt = $this->Connection()->prepare($sqlstring);
+			$stmt->bind_param("s", $searchstring);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{ 
+				while($bookassoc = $result->fetch_assoc())
+				{
+					$TsCreate = DateTime::createFromFormat("Y-m-d H:i:s", $bookassoc["TsCreate"]);
+					$TsUpdate = DateTime::createFromFormat("Y-m-d H:i:s", $bookassoc["TsUpdate"]);
+					$book = new Book();
+					$book
+						->setId($bookassoc["IDBook"])
+						->setTitle($bookassoc["Title"])
+						->setCover($bookassoc["Cover"])
+						->setCoverCaption($bookassoc["CoverCaption"])
+						->setPubYear($bookassoc["PubYear"])
+						->setEditor($bookassoc["Editor"])
+						->setPrice($bookassoc["Price"])
+						->setRatingValue($bookassoc["RatingValue"])
+						->setRatingCount($bookassoc["RatingCount"])
+						->setSoldQuantity($bookassoc["SoldQuantity"])
+						->setShortDescription($bookassoc["ShortDescription"])
+						->setDescription($bookassoc["Description"])
+						->setTsCreate($TsCreate)
+						->setTsUpdate($TsUpdate);
+					$books[$book->getId()] = $book;
+				}
+			}
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement 3 ".__FUNCTION__." ha fallito l'execute: " . (isset($stmt) ? htmlspecialchars($stmt->error) : "no error object"), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			if(isset($result))
+				$result->close();
+			if(isset($stmt))		
+				$stmt->close();
+		}
+		try
+		{
+
+			$sqlstring = "SELECT * FROM books WHERE MATCH(Title, Editor, ShortDescription, Description) AGAINST (? IN NATURAL LANGUAGE MODE)";
+			$stmt = $this->Connection()->prepare($sqlstring);
+			$stmt->bind_param("s", $searchstring);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{ 
+				while($bookassoc = $result->fetch_assoc())
+				{
+					$TsCreate = DateTime::createFromFormat("Y-m-d H:i:s", $bookassoc["TsCreate"]);
+					$TsUpdate = DateTime::createFromFormat("Y-m-d H:i:s", $bookassoc["TsUpdate"]);
+					$book = new Book();
+					$book
+						->setId($bookassoc["IDBook"])
+						->setTitle($bookassoc["Title"])
+						->setCover($bookassoc["Cover"])
+						->setCoverCaption($bookassoc["CoverCaption"])
+						->setPubYear($bookassoc["PubYear"])
+						->setEditor($bookassoc["Editor"])
+						->setPrice($bookassoc["Price"])
+						->setRatingValue($bookassoc["RatingValue"])
+						->setRatingCount($bookassoc["RatingCount"])
+						->setSoldQuantity($bookassoc["SoldQuantity"])
+						->setShortDescription($bookassoc["ShortDescription"])
+						->setDescription($bookassoc["Description"])
+						->setTsCreate($TsCreate)
+						->setTsUpdate($TsUpdate);
+					$books[$book->getId()] = $book;
+				}
+			}
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement 4 ".__FUNCTION__." ha fallito l'execute: " . (isset($stmt) ? htmlspecialchars($stmt->error) : "no error object"), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			if(isset($result))
+				$result->close();
+			if(isset($stmt))		
+				$stmt->close();
+		}
+		return $books;
+	}
+
 	public function booksList()
 	{
 		$books = array();
 		
 		try
 		{
-			$stmt = $this->Connection()->prepare("SELECT * FROM books");
-		}catch(mysqli_sql_exception $e)
-		{
-			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
-		}
-		try
-		{
+			$sqlstring = "SELECT * FROM books";
+			$stmt = $this->Connection()->prepare($sqlstring);
 			$stmt->execute();
 			$result = $stmt->get_result();
 			if($result->num_rows > 0)
@@ -1059,10 +1234,10 @@ class DbManager
 					$tscreate = DateTime::createFromFormat("Y-m-d H:i:s", $userassoc["TsCreate"]);
 					if ($tscreate === false)
 						$tscreate = null;
-					$tsupdate = DateTime::createFromFormat("Y-m-d H:i:s", $userassoc["TsUpdate"]);
+					$tsupdate = $userassoc["TsUpdate"]!=null ? DateTime::createFromFormat("Y-m-d H:i:s", $userassoc["TsUpdate"]) : null;
 					if ($tsupdate === false)
 						$tsupdate = null;
-					$tslastlogin = DateTime::createFromFormat("Y-m-d H:i:s", $userassoc["TsLastLogin"]);
+					$tslastlogin = $userassoc["TsLastLogin"]!=null ? DateTime::createFromFormat("Y-m-d H:i:s", $userassoc["TsLastLogin"]) : null;
 					if ($tslastlogin === false)
 						$tslastlogin = null;
 

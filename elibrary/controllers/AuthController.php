@@ -28,7 +28,7 @@ class AuthController
 	{
 		// Check if user already logged in
 		if(AuthController::isLogged())
-			return FrontController::getFrontController()->redirect("/home/");
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("index", "home", null));
 
 		// Form validation
 		$errors = array();
@@ -61,7 +61,7 @@ class AuthController
 					$_SESSION["LoggedUser"] = serialize($user);
 					FrontController::DbManager()->userUpdateLastLogin($user);
 					// TODO return FrontController::getFrontController()->redirect("/home/");
-					return FrontController::getFrontController()->redirect("/users/profile/id/".$user->getId()."/");
+					return FrontController::getFrontController()->redirect(FrontController::getUrl("users", "profile", array("id"=>$user->getId())));
 				}else
 				{
 					$errors[] = array(
@@ -78,8 +78,8 @@ class AuthController
 		$page->setTemplate("main");
 		$page->setTitle("Autenticazione dell'utente");
 		$page->setId("login");
-		$page->setFormAction("/auth/login/");
-		$page->addBreadcrumb("Home", "/home/", "lang=\"en\"");
+		$page->setFormAction(FrontController::getUrl("auth", "login", null));
+		$page->addBreadcrumb("Home", FrontController::getUrl("index", "home", null), "lang=\"en\"");
 		$page->addBreadcrumb("Accedi", null);
 
 		if(count($errors) > 0)
@@ -94,7 +94,7 @@ class AuthController
 	{
 		session_unset();
 		session_destroy();
-		return FrontController::getFrontController()->redirect("/home/");
+		return FrontController::getFrontController()->redirect(FrontController::getUrl("index", "home", null));
 	}
 
 	public function registerAction()
@@ -106,8 +106,8 @@ class AuthController
 		$page->setTemplate("main");
 		$page->setTitle("Registra il tuo account " . Application::PROJECT_TITLE);
 		$page->setId("registration");
-		$page->setFormAction("/auth/register/");
-		$page->addBreadcrumb("Home", "/home/", "lang=\"en\"");
+		$page->setFormAction(FrontController::getUrl("auth", "register", null));
+		$page->addBreadcrumb("Home", FrontController::getUrl("index", "home", null), "lang=\"en\"");
 		$page->addBreadcrumb("Registrazione nuovo account", null);
 
 		// Form validation
@@ -343,7 +343,7 @@ class AuthController
 		$page->setTemplate("main");
 		$page->setTitle("Account registrato con successo!");
 		$page->setId("registration");
-		$page->addBreadcrumb("Home", "/home/", "lang=\"en\"");
+		$page->addBreadcrumb("Home", FrontController::getUrl("index", "home", null), "lang=\"en\"");
 		$page->addBreadcrumb("Registrazione nuovo account", null);
 
 		$page->addDictionary("username", unserialize($_SESSION["RegisteredUser"])->getUsername());
