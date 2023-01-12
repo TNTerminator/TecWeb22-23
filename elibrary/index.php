@@ -22,6 +22,12 @@
 
 
 /* *****
+* SESSION INIT 
+* */
+ini_set('session.use_cookies', 1);
+session_start();
+
+/* *****
  * DEBUG MODE AND PHP ERROR MANAGEMENT
  * 
  * To set the correct error display mode, the project works with a flag (DEBUG_MODE) that manages the DEBUG MODE.
@@ -70,7 +76,6 @@ define("BASE_DIR", $basedir);
 define("BASE_PATH", substr(BASE_DIR, 1));
 
 /* Inclusion of all requires libraries */
-require_once("includes/init.php");
 require_once("includes/Application.php");
 
 Application::current()->run();

@@ -217,8 +217,10 @@ class FrontController
 
 	public function redirect($path)
 	{
-		echo "<html><head><meta http-equiv=\"refresh\" content=\"0; URL='" . BASE_DIR.$path . "'\" /></head></html>";
-		die();
+		session_write_close();
+		header_remove();
+		header("Location: " . BASE_DIR.$path);
+		exit();
 	}
 
 	public static function getAbsoluteUrl($path)

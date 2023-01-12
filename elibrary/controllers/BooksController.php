@@ -897,7 +897,7 @@ class BooksController
 
 	}
 
-	public static function printBookSmallBox($book, $authors)
+	public static function printBookSmallBox($book, $authors, $addbtn = true)
 	{
 		$html = "";
 		$html .= "<article class=\"book book_thumbnail\">
@@ -950,18 +950,20 @@ class BooksController
 				val_5 => Ottimo
 			--> */
 		$html .= "</dd>
-		</dl>
-	<a role=\"button\" href=\"";
+		</dl>";
 		$params = array(
 			"id" => $book->getId()
 		); 
-		$html .= FrontController::getUrl("cart", "add", $params);
-		$html .= "\">Aggiungi al carrello</a>
-	<a role=\"button\" href=\"";
+		if($addbtn)
+		{
+			$html .= "<a role=\"button\" href=\"";
+			$html .= FrontController::getUrl("cart", "add", $params);
+			$html .= "\">Aggiungi al carrello</a>";
+		}
+		$html .= "<a role=\"button\" href=\"";
 		$html .= FrontController::getUrl("books", "view", $params);
 		$html .= "\">Maggiori informazioni</a>
-	<!-- TODO questi due a button, li mettiamo dentro dei tag p? -->
-</article>";
+		</article>";
 		return $html;
 	}
 

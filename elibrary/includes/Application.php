@@ -23,6 +23,7 @@ require_once("controllers/AuthController.php");
 require_once("controllers/AuthorsController.php");
 require_once("controllers/BooksController.php");
 require_once("controllers/CategoriesController.php");
+require_once("controllers/CartController.php");
 require_once("controllers/ErrorController.php");
 require_once("controllers/FrontController.php");
 require_once("controllers/IndexController.php");
@@ -47,6 +48,8 @@ class Application
 
 	private static $_currentApplication;
 
+	public $PHPSESSID;
+
 	public static function current()
 	{
 		if(self::$_currentApplication == null)
@@ -56,10 +59,9 @@ class Application
 
 	public function run()
 	{
-		/* *****
-		* SESSION INIT 
-		* */
-		session_start();
+		$this->PHPSESSID = session_id();
+		if(!isset($_SESSION["Cart"]))
+			$_SESSION["Cart"] = array();
 
 		/* Starting up the FrontController. */
 		$FrontController = new FrontController();
