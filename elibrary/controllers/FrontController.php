@@ -110,6 +110,8 @@ class FrontController
     protected function parseUri() 
 	{
         $path = trim(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH), "/");
+		$path = str_replace("index.php/", "", $path);
+		$path = str_replace("/index.php", "", $path); // TODO verificare correttezza di sta roba, non mi piace
         if($path == BASE_PATH)
 		{
         	// No action required: default controller and action will be called
@@ -217,8 +219,10 @@ class FrontController
 
 	public function redirect($path)
 	{
-		echo "<html><head><meta http-equiv=\"refresh\" content=\"0; URL='" . BASE_DIR.$path . "'\" /></head></html>";
-		die();
+		session_write_close();
+		header_remove();
+		header("Location: " . $path);
+		exit();
 	}
 
 	public static function getAbsoluteUrl($path)

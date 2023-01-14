@@ -22,6 +22,12 @@
 
 
 /* *****
+* SESSION INIT 
+* */
+ini_set('session.use_cookies', 1);
+session_start();
+
+/* *****
  * DEBUG MODE AND PHP ERROR MANAGEMENT
  * 
  * To set the correct error display mode, the project works with a flag (DEBUG_MODE) that manages the DEBUG MODE.
@@ -63,14 +69,19 @@ define('ROOT_DIR', __DIR__);
 
 /* BASE_DIR (const) is initialized with the virtual web root folder path.
  * This is needed in order to map correctly the links used by the project with the FrontController. */
-$basedir = dirname($_SERVER['PHP_SELF']);
+if(isset($_SERVER['HTTPS']))
+	$protocol = ($_SERVER['HTTPS'] && $_SERVER['HTTPS'] != "off") ? "https" : "http";
+else
+	$protocol = 'http';
+$baseurl = parse_url($protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
+define("WEBSITE_URL", $baseurl["scheme"]."://".$baseurl["host"].dirname($baseurl["path"]));
+$basedir = dirname($baseurl["path"]); // TODO: rimuovere? dirname($_SERVER['PHP_SELF']);
 if($basedir == "/")
 	$basedir = "";
 define("BASE_DIR", $basedir);
 define("BASE_PATH", substr(BASE_DIR, 1));
 
 /* Inclusion of all requires libraries */
-require_once("includes/init.php");
 require_once("includes/Application.php");
 
 Application::current()->run();

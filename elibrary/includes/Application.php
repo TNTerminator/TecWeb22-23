@@ -23,10 +23,10 @@ require_once("controllers/AuthController.php");
 require_once("controllers/AuthorsController.php");
 require_once("controllers/BooksController.php");
 require_once("controllers/CategoriesController.php");
+require_once("controllers/CartController.php");
 require_once("controllers/ErrorController.php");
 require_once("controllers/FrontController.php");
 require_once("controllers/IndexController.php");
-require_once("controllers/OrdersController.php");
 require_once("controllers/ProfileController.php");
 require_once("controllers/UsersController.php");
 
@@ -47,6 +47,8 @@ class Application
 
 	private static $_currentApplication;
 
+	public $PHPSESSID;
+
 	public static function current()
 	{
 		if(self::$_currentApplication == null)
@@ -56,10 +58,9 @@ class Application
 
 	public function run()
 	{
-		/* *****
-		* SESSION INIT 
-		* */
-		session_start();
+		$this->PHPSESSID = session_id();
+		if(!isset($_SESSION["Cart"]))
+			$_SESSION["Cart"] = array();
 
 		/* Starting up the FrontController. */
 		$FrontController = new FrontController();
@@ -143,7 +144,7 @@ class Application
 	// Link image type to correct image loader and saver
 	// - makes it easier to add additional types later on
 	// - makes the function easier to read
-	const IMAGE_HANDLERS = [
+	static $IMAGE_HANDLERS = [
 		IMAGETYPE_JPEG => [
 			'load' => 'imagecreatefromjpeg',
 			'save' => 'imagejpeg',
@@ -181,12 +182,12 @@ class Application
 		$type = exif_imagetype(ROOT_DIR . "/" . $src);
 
 		// if no valid type or no handler found -> exit
-		if (!$type || !IMAGE_HANDLERS[$type]) {
+		if (!$type || !self::$IMAGE_HANDLERS[$type]) {
 			return null;
 		}
 
 		// load the image with the correct loader
-		$image = call_user_func(IMAGE_HANDLERS[$type]['load'], ROOT_DIR . "/" . $src);
+		$image = call_user_func(self::$IMAGE_HANDLERS[$type]['load'], ROOT_DIR . "/" . $src);
 
 		// no image found at supplied location -> exit
 		if (!$image) {
@@ -273,8 +274,8 @@ class Application
 			intval(($fittoWidth - $targetWidth) / 2), 
 			intval(($fittoHeight - $targetHeight) / 2), 
 			0, 0,
-			$targetWidth, $targetHeight,
-			$width, $height
+			intval($targetWidth), intval($targetHeight),
+			intval($width), intval($height)
 		);
 
 
@@ -284,10 +285,10 @@ class Application
 
 		// save the duplicate version of the image to disk
 		return call_user_func(
-			IMAGE_HANDLERS[$type]['save'],
+			self::$IMAGE_HANDLERS[$type]['save'],
 			$thumbnail,
 			$dest,
-			IMAGE_HANDLERS[$type]['quality']
+			self::$IMAGE_HANDLERS[$type]['quality']
 		);
 	}
 
@@ -301,7 +302,7 @@ class Application
 		$thumbfilename = $file_info['filename'] . "_" . $targetWidth . "x" . $targetHeight . "." . $file_info['extension'];
 		$dest = $file_info['dirname'] . "/" . $thumbfilename;
 		if(!file_exists($dest))
-			createThumbnail($src, $dest, $targetWidth, $targetHeight);
+			self::createThumbnail($src, $dest, $targetWidth, $targetHeight);
 
 		$file_info = pathinfo($src);
 		$dest = $file_info['dirname'] . "/" . $thumbfilename;

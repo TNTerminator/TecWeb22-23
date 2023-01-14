@@ -641,7 +641,7 @@ class View
 		<ol>";
 		if(AuthController::isLogged())
 		{
-			$html .= $this->getMenuItemByController("Carrello", "profile", "cart");
+			$html .= $this->getMenuItemByController("Carrello", "cart", "index");
 			$html .= $this->getMenuItemByController("Profilo", "profile", "index");
 			$html .= $this->getMenuItemByController("I miei acquisti", "profile", "mylibrary");
 			$html .= $this->getMenuItemByController("Logout", "auth", "logout");
@@ -740,5 +740,10 @@ class View
 	public function getFormSearchBookAction()
 	{
 		return FrontController::getUrl("books", "search", null);
+	}
+
+	public function getPHPSESSID()
+	{
+		return Application::current()->PHPSESSID;
 	}
 }

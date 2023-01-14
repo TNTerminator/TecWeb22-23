@@ -10,6 +10,61 @@ class BooksController
 {
 	public function indexAction()
 	{
+		$page = new View();
+		$page->setName("books");
+		$page->setPath("books/index.html");
+		$page->setTemplate("main");
+		$page->setTitle("Entra in libreria da dovunque nel mondo");
+		$page->setId("books_index");
+		$page->addBreadcrumb("Elenco libri", null, "");
+		$page->setAuthors(Application::PROJECT_AUTHORS);
+		$page->setKeywords(""); // TODO
+		$page->setDescription(""); // TODO
+
+		$books = FrontController::DbManager()->booksList();
+		$html = "";
+		foreach($books as $book)
+		{
+			$authors = FrontController::DbManager()->getAuthorsByBook($book->getId());
+			$html .= BooksController::printBookSmallBox($book, $authors);
+		}
+		$page->addDictionary("BooksList", $html);
+
+		$page->render();
+	}
+
+	public function searchAction()
+	{
+		$searchstring = Application::cleanInput($_POST["search_text"]);
+
+		$page = new View();
+		$page->setName("search");
+		$page->setPath("books/search.html");
+		$page->setTemplate("main");
+		$page->setTitle("Entra in libreria da dovunque nel mondo");
+		$page->setId("home");
+		$page->addBreadcrumb("Elenco libri", FrontController::getUrl("books", "index", null), null);
+		$page->addBreadcrumb("Risultati della ricerca", null, null);
+		$page->setAuthors(Application::PROJECT_AUTHORS);
+		$page->setKeywords(""); // TODO
+		$page->setDescription(""); // TODO
+
+		$books = FrontController::DbManager()->booksSearchFullText($searchstring);
+		$html = "";
+		if(count($books) > 0)
+		{
+			foreach($books as $book)
+			{
+				$authors = FrontController::DbManager()->getAuthorsByBook($book->getId());
+				$html .= BooksController::printBookSmallBox($book, $authors);
+			}
+		}else
+			$html .= "";
+		$page->addDictionary("SearchString", $searchstring);
+		$page->addDictionary("NumResults", count($books));
+		$page->addDictionary("BooksList", $html);
+
+		$page->render();
 	}
 
 	public function listAction()
@@ -842,7 +897,7 @@ class BooksController
 
 	}
 
-	public static function printBookSmallBox($book, $authors)
+	public static function printBookSmallBox($book, $authors, $addbtn = true)
 	{
 		$html = "";
 		$html .= "<article class=\"book book_thumbnail\">
@@ -895,18 +950,20 @@ class BooksController
 				val_5 => Ottimo
 			--> */
 		$html .= "</dd>
-		</dl>
-	<a role=\"button\" href=\"";
+		</dl>";
 		$params = array(
 			"id" => $book->getId()
 		); 
-		$html .= FrontController::getUrl("cart", "add", $params);
-		$html .= "\">Aggiungi al carrello</a>
-	<a role=\"button\" href=\"";
+		if($addbtn)
+		{
+			$html .= "<a role=\"button\" href=\"";
+			$html .= FrontController::getUrl("cart", "add", $params);
+			$html .= "\">Aggiungi al carrello</a>";
+		}
+		$html .= "<a role=\"button\" href=\"";
 		$html .= FrontController::getUrl("books", "view", $params);
 		$html .= "\">Maggiori informazioni</a>
-	<!-- TODO questi due a button, li mettiamo dentro dei tag p? -->
-</article>";
+		</article>";
 		return $html;
 	}
 

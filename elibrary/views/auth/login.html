@@ -1,4 +1,4 @@
-<h3>Accesso ai propri servizi</h3>
+<h2>Accesso ai propri servizi</h2>
 <form method="post" action="##-View::FormAction-##" id="login-form">
 	<fieldset>
 		<legend>Dati di accesso</legend>
@@ -20,7 +20,8 @@
 	<input type="submit" name="CMD_Login" value="Accedi">
 </form>
 <hr class="interruption" />
-<p>Non hai ancora un account? <a href="/auth/register/">Registrati cliccando qui!</a></p>
+<p>Non hai ancora un account? <a href="##-Dict::RegisterLink-##">Registrati cliccando qui!</a></p>
+<p>Hai scordato la password? <a href="##-Dict::ChangePasswordLink-##">Resetta la tua password cliccando qui!</a></p>
 <p>Hai problemi di accesso? <a href="mailto:michele.marchioro.1@studenti.unipd.it">Clicca qui per supporto!</a></p>
 <script type="text/javascript">
 document.forms["login-form"].addEventListener("submit", checkLoginForm);
