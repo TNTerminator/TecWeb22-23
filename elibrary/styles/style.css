@@ -10,7 +10,8 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
-*{
+*
+{
 	margin: 0;
 }
 
@@ -85,7 +86,7 @@ main
 {
 	overflow: hidden;
 	position: relative;
-	padding-top: 1.5em;
+	padding-top: 2em;
 }
 
 main,
@@ -105,30 +106,29 @@ main aside
 	position: absolute;
 	top:0;
 	left:0;
+	background-color: #ADADAD;
+	width:100%;
+	height:2em;
 }
 main aside form#form_search
 {
 	width:100%;
-	height:1.5em;
+	height:2em;
 	margin:0;
-
 }
 main aside form#form_search fieldset
 {
 	border:none;
 	padding:0;
+	background: transparent;
 }
 
 main aside form#form_search fieldset > *
 {
-	float: left;
-	background: transparent;
+	float: right;
 }
 main aside form#form_search fieldset legend
 {
-	/*position: absolute;
-	top:0;
-	left:0;*/
 	font-size:1em;
 	border:none;
 	background: transparent;
@@ -141,6 +141,20 @@ main aside form#form_search input
 main aside form#form_search label
 {
 	display: none;
+}
+main aside form#form_search input[type=text]
+{
+	min-width:20em;
+	height:2em;
+}
+main aside form#form_search input[type=submit] 
+{
+	margin:0;
+    border: 1px solid #00264b;
+    background: transparent;
+    color: #00264b;
+	height:2em;
+	box-sizing: border-box;
 }
 
 footer
