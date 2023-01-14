@@ -111,3 +111,15 @@ div.field
 {
 	border-color: blue;
 }
+
+
+
+article.book_thumbnail a[role=button].addtocart
+{
+	background-color: #0066cb;
+}
+
+article.book_thumbnail a[role=button].moreinfo
+{
+	background-color: #00264b;
+}

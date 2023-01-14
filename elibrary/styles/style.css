@@ -81,6 +81,13 @@ nav#mainmenu ul
 	margin: 0;
 }
 
+main
+{
+	overflow: hidden;
+	position: relative;
+	padding-top: 1.5em;
+}
+
 main,
 footer
 {
@@ -93,6 +100,49 @@ main section
 	clear:left;
 }
 
+main aside
+{
+	position: absolute;
+	top:0;
+	left:0;
+}
+main aside form#form_search
+{
+	width:100%;
+	height:1.5em;
+	margin:0;
+
+}
+main aside form#form_search fieldset
+{
+	border:none;
+	padding:0;
+}
+
+main aside form#form_search fieldset > *
+{
+	float: left;
+	background: transparent;
+}
+main aside form#form_search fieldset legend
+{
+	/*position: absolute;
+	top:0;
+	left:0;*/
+	font-size:1em;
+	border:none;
+	background: transparent;
+	color: #00264b;
+}
+main aside form#form_search input
+{
+	display: inline-block;
+}
+main aside form#form_search label
+{
+	display: none;
+}
+
 footer
 {
 	background-image: url(https://www.unipd.it/sites/unipd.it/themes/unipd_2017/img/logo-UNIPD-white.png);
@@ -102,64 +152,171 @@ footer
 	min-height: calc(110px + 2em);
 }
 
+/*dl:after
+{
+	content: ".";
+	display: block;
+	clear:left;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+dt
+{
+	clear:left;
+	float:left;
+	width:50%;
+	font-weight: bold;
+}
+dd
+{
+	float:left;
+	width:50%;
+}*/
+
+a[role=button]
+{
+	box-sizing: border-box;
+  	text-align: center;
+}
+
+span.val_0,
+span.val_1,
+span.val_2,
+span.val_3,
+span.val_4,
+span.val_5
+{
+    display: inline-block;
+    overflow: hidden;
+    text-indent: -9999px;
+    color: transparent;
+}
+
+span.val_0::before,
+span.val_1::before,
+span.val_2::before,
+span.val_3::before,
+span.val_4::before,
+span.val_5::before
+{
+	/*display: inline-block;*/
+	float: left;
+	color: gold;
+	text-shadow: 2px 2px 4px #000000;
+    font-size: 1.3rem;
+	text-indent:0;
+}
+
+span.val_0::before
+{
+	content:"☆☆☆☆☆"; /* TODO su firefox non si vedono */
+}
+span.val_1::before
+{
+	content:"★☆☆☆☆";
+}
+span.val_2::before
+{
+	content:"★★☆☆☆";
+}
+span.val_3::before
+{
+	content:"★★★☆☆";
+}
+span.val_4::before
+{
+	content:"★★★★☆";
+}
+span.val_5::before
+{
+	content:"★★★★★";
+}
+
 article.book_thumbnail
 {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-	background-color: lightgrey;
+	box-sizing: border-box;
+	box-shadow: 3px 3px 13px 1px #ADADAD;
+	background-color: #CFDBEB;
   	width: 15em;
   	border: 1px solid #0066cb;
 	border-radius: 15px;
-  	padding: 1em;
  	margin: 1em;
 	text-align: left;
 	float:left; 
 }
 
-article.book_thumbnail h3 {
+article.book_thumbnail h3 
+{
+	text-align: center;
+	font-weight: normal;
+	font-size:1.4em;
+    height: 2.53em;
+}
+
+article.book_thumbnail figure,
+article.book_thumbnail figure img
+{
+	width: 100%;
+	border-radius: 15px 15px 0 0;
+}
+article.book_thumbnail figure figcaption
+{
+	display: none;
+}
+
+article.book_thumbnail dt
+{
+	display: none;
+}
+
+article.book_thumbnail dd
+{
 	text-align: center;
 }
-
-article.book_thumbnail figure {
-	width: 100%;
+article.book_thumbnail dd.author
+{
+	font-size: 0.9em;
+}
+article.book_thumbnail dd.author::before
+{
+	content:"di ";
+	font-style: italic;
+	font-size: 0.9em;
+}
+article.book_thumbnail dd.price
+{
+	font-weight: bold;
+	font-size:1.2em;
+    margin-top: 0.7em;
+    margin-bottom: 0.7em;
+}
+article.book_thumbnail dd.price .taxes
+{
+	display: block;
+	font-weight: normal;
+	font-size:0.6em;
+	font-style: italic;
 }
 
-article.book_thumbnail#author {
-	font-size: 15px;
-}
-
-article.book_thumbnail.editor {
-	font-size: 15px;
-}
-
-article.book_thumbnail.pubdate {
-	font-size: 15px;
-}
-
-article.book_thumbnail.price {
-	font-size: 15px;
-}
-
-article.book_thumbnail.sold_quantity {
-	font-size: 15px;
-}
-
-article.book_thumbnail.rating {
-	font-size: 15px;
-}
-
-article.book_thumbnail.p {
-	font-size: 15px;
-	text-align: justify;
-}
-
-article.book_thumbnail.a {
+article.book_thumbnail a[role=button]
+{
+	display: block;
   	padding: 12px;
   	color: white;
   	background-color: #000;
-  	text-align: center;
-  	cursor: pointer;
   	width: 100%;
   	font-size: 18px;
+}
+
+article.book_thumbnail a[role=button].addtocart
+{
+	text-transform: uppercase;
+}
+
+article.book_thumbnail a[role=button]:last-child
+{
+	border-radius: 0 0 15px 15px;
 }
 
 @media only screen and (max-width: 600px) 
