@@ -27,7 +27,6 @@ require_once("controllers/CartController.php");
 require_once("controllers/ErrorController.php");
 require_once("controllers/FrontController.php");
 require_once("controllers/IndexController.php");
-require_once("controllers/OrdersController.php");
 require_once("controllers/ProfileController.php");
 require_once("controllers/UsersController.php");
 

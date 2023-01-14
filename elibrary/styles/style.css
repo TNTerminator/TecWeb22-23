@@ -1,3 +1,13 @@
+/**
+ * style.css
+ *
+ * ATTENZIONE: Il sistema è dotato di FrontController, quindi vanno rispettate delle regole ferree sui path.
+ *
+ * url() : per file locali del sito, utilizzare sempre il percorso relativo rispetto a questo file CSS
+ *			in questo modo i path vengono interpretati in maniera indipendente dal documento specifico e 
+ * 			sempre all'interno della struttura delle cartelle del sito web.
+ */
+
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 *{
@@ -39,7 +49,7 @@ body > header > h1 > span
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background-image: url("/media/logo.jpeg"); /* TODO: non c'è la BASE_DIR!!! non funziona allo spostamento */
+	background-image: url("../media/logo.jpeg"); /* TODO: non c'è la BASE_DIR!!! non funziona allo spostamento */
 	background-position: center left;
 	background-repeat: no-repeat;
 }
@@ -86,6 +96,7 @@ main section
 footer
 {
 	background-image: url(https://www.unipd.it/sites/unipd.it/themes/unipd_2017/img/logo-UNIPD-white.png);
+	/* TODO salvare copia locale dell'immagine e adeguare url locale */
 	background-repeat: no-repeat;
 	background-position: 1em 1em;
 	min-height: calc(110px + 2em);

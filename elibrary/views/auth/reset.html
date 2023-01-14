@@ -1,0 +1,19 @@
+<h2>Richiedi reset della password</h2>
+##-Dict::Messages-##
+<form method="post" action="##-View::FormAction-##" id="reset-form">
+	<fieldset>
+		<legend>Reset password</legend>
+
+		<div class="field">
+			<label for="email">Email</label>
+			<span class="field_hint">Inserire il proprio indirizzo email</span>
+			<input type="text" name="email" id="email" required>
+			##-FieldError::email-##
+		</div>
+	</fieldset>
+
+	<input type="submit" name="CMD_Reset" value="Richiedi reset della password">
+</form>
+<script type="text/javascript">
+document.forms["login-form"].addEventListener("submit", checkLoginForm);
+</script>

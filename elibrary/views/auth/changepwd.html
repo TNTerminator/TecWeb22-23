@@ -1,0 +1,32 @@
+<h2>Cambia la password</h2>
+##-Dict::Messages-##
+<form method="post" action="##-View::FormAction-##" id="changepwd-form">
+	<fieldset>
+		<legend>Cambia la password</legend>
+
+		<div class="field">
+			<label for="oldpassword">Password attuale (obbligatorio)</label>
+			<input type="password" name="oldpassword" id="oldpassword" required="required">
+			##-FieldError::oldpassword-##
+		</div>
+
+		<div class="field">
+			<label for="password"><span lang="en">Password nuova (obbligatorio)</span></label>
+			<input type="password" name="password" id="password" required />
+			<p class="field_instructions">La <span lang="en">Password</span> deve essere lunga almeno 5 caratteri e non più di 16.</p>
+			##-FieldError::password-##
+		</div>
+
+		<div class="field">
+			<label for="confermapassword"><span lang="en">Conferma password nuova (obbligatorio)</span></label>
+			<input type="password" name="confermapassword" id="confermapassword" required />
+			<p class="field_instructions">Ridigita la stessa <span lang="en">password</span> usata nel campo <span lang="en">Password</span> a titolo precauzionale; entrambe le <span lang="en">password</span> devono coincidere.</p>
+			##-FieldError::confermapassword-##
+		</div>
+	</fieldset>
+
+	<input type="submit" name="CMD_Reset" value="Richiedi reset della password">
+</form>
+<script type="text/javascript">
+document.forms["login-form"].addEventListener("submit", checkLoginForm);
+</script>

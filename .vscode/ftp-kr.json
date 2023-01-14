@@ -1,10 +1,10 @@
 {
-    "host": "ftp.marvago.com",
-    "username": "elibrary@elibrary.marvago.com",
-    "password": "elibrary2022",
-    "remotePath": "/",
-    "protocol": "ftp",
-    "port": 0,
+    "host": "localhost",
+    "username": "acasadom",
+    "password": "Ac31..13",
+    "remotePath": "public_html",
+    "protocol": "sftp",
+    "port": 8022,
     "fileNameEncoding": "utf8",
     "autoUpload": false,
     "autoDelete": false,
@@ -16,3 +16,9 @@
     ],
 	"localBasePath": "elibrary"
 }
+
+/*
+    "host": "ftp.marvago.com",
+    "username": "elibrary@elibrary.marvago.com",
+    "password": "elibrary2022",
+*/
