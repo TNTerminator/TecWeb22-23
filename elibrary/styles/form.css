@@ -1,47 +1,90 @@
+form
+{
+	margin: 1.25em;
+	margin-left:auto;
+	margin-right:auto;
+}
 
 form fieldset
-{
+{	
 	border-radius: 15px;
 	background-color: #0066cb;
-	border:1px solid #00264b;
+	border:4px solid #00264b;
 }
 form fieldset legend
 {
+	color: white;
 	background-color: #0066cb;
-	border:1px solid #00264b;
+	border-radius: 12px;
+	border:4px solid #00264b;
+	padding: 0.25em;
 	margin: 0 auto;
+	font-size: 1.65em;
 }
 
 
 div.field
 {
-	border: 1px solid;
+	padding: 1em;
+	color:white;
+	border: 2px solid;
 	border-radius: 12px;
-	margin: 3em;
+	margin: 1em;
 	position:relative;
 }
 
 div.field label
 {
 	display:block;
+	text-align:center;
+	font-size: 1.4em;
+	margin: 0.6em;
 }
-div.field input,
-div.field textarea
-{
+
+div.field span{
+
 	display:block;
+	font-size: 0.6em;
+	text-align:center;
+	margin-left:auto; 
+	margin-right:auto;
+	padding:0.5em;
+
 }
-div.field textarea
+
+div.field input,
+div.field select
 {
-	width: 100%;
-	min-height: 8em;
+	height:2em;
+}
+
+div.field img
+{
+
+	display:block;
+	margin: 0 auto;
+
 }
 
 div.field input,
 div.field textarea,
 div.field select
 {
+	padding-left:1em;
+	padding-right:1em;
+	display:block;
+	width:75%;
+	margin-left:auto;
+	margin-right:auto;
 	border-radius: 15px;
+	box-sizing:border-box;
 }
+
+div.field textarea
+{
+	min-height: 8em;
+}
+
 div.field input#price:before
 {
     content: "&euro; ";
@@ -52,18 +95,49 @@ div.field input#price:before
 
 div.field .field_instructions
 {
-	position: absolute;
-	top:0;
-	right:0;
-	float:right;
-	width:30%;
-	background-color:coral;
+	display:block;
+	font-size: 0.9em;
+	text-align:center;
+	margin-left:auto; 
+	margin-right:auto;
+	padding:0.5em;
 }
 
 div.field ul.fielderrors
 {
+	background-color:edc2c2;
 	list-style: none;
 	padding:0;
+	margin-top:1em;
+	text-align:center;
 	border: 2px solid red;
 	color:red;
+}
+
+input[type=submit]
+{	
+	border:4px solid #00264b;
+	display:block;
+	margin-top:0.5em;
+	margin-left:auto;
+	margin-right:auto;
+	background-color:#0066cb;
+	color:white;
+	font-size:1em;
+}
+
+@media only screen and (max-width: 1200px) 
+{
+	form
+	{
+		width:23em;
+	}
+}
+
+@media only screen and (min-width: 1200px) 
+{
+	form
+	{
+		width:40em;
+	}
 }
