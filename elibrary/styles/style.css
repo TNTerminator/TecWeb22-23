@@ -8,7 +8,8 @@
  * 			sempre all'interno della struttura delle cartelle del sito web.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 *
 {
@@ -25,12 +26,13 @@ body
 	margin: 0;
 	padding: 0;
 	font-size: 1.2em;
-	font-family: 'Lora', serif;
+	font-family: 'PT Sans', sans-serif;
 }
 
 body > header
 {
 	width: 100%;
+	position: relative;
 }
 
 body > header > h1
@@ -55,6 +57,46 @@ body > header > h1 > span
 	background-repeat: no-repeat;
 }
 
+body > header .userinfo
+{
+	position: absolute;
+	top: 50%;
+	right:1em;;
+	margin-top: -2.7em;
+}
+body > header .userinfo .username
+{
+	font-weight: bold;
+}
+nav#usermenu
+{
+	position: absolute;
+	top: 50%;
+	right:1em;
+	margin-top: -1em;
+}
+nav#usermenu ol
+{
+	list-style: none;
+	margin:0;
+	padding: 0;
+}
+nav#usermenu ol li
+{
+	display: inline-block;
+	margin: 0 0.5em 0 0;
+}
+nav#usermenu ol li a
+{
+	display: block;
+	padding: 0.3em 0.8em;
+	background-color: #ffffff;
+	border-radius: 6px;
+	font-size: 0.9em;
+	text-transform: uppercase;
+	text-decoration: none;
+}
+
 nav#breadcrumbs
 {
 	padding:0.3em;
@@ -74,12 +116,6 @@ nav#breadcrumbs ol li:not(:last-child)::after
 {
 	padding-left: 0.5em;
 	content: "»";
-}
-
-nav#mainmenu ol,
-nav#mainmenu ul
-{
-	margin: 0;
 }
 
 main
@@ -112,12 +148,14 @@ main aside
 }
 main aside form#form_search
 {
-	width:100%;
-	height:2em;
-	margin:0;
+	width: auto;
+	float:right;
+	height:100%;
+	margin:0 0 0 0;
 }
 main aside form#form_search fieldset
 {
+	height:100%;
 	border:none;
 	padding:0;
 	background: transparent;
@@ -125,18 +163,26 @@ main aside form#form_search fieldset
 
 main aside form#form_search fieldset > *
 {
-	float: right;
+	margin: 0;
+	display: inline-block;
+	height:100%;
 }
 main aside form#form_search fieldset legend
 {
+	float: left;
 	font-size:1em;
 	border:none;
 	background: transparent;
 	color: #00264b;
 }
+main aside form#form_search fieldset legend::after
+{
+	content: ":";
+}
 main aside form#form_search input
 {
-	display: inline-block;
+	margin: 0;
+	font-size: 1em;
 }
 main aside form#form_search label
 {
@@ -145,16 +191,24 @@ main aside form#form_search label
 main aside form#form_search input[type=text]
 {
 	min-width:20em;
-	height:2em;
+	box-sizing: border-box;
 }
 main aside form#form_search input[type=submit] 
 {
 	margin:0;
     border: 1px solid #00264b;
     background: transparent;
-    color: #00264b;
-	height:2em;
+    color: #ffffff;
 	box-sizing: border-box;
+	width:6em;
+	background-color: #00264b;
+	text-transform: uppercase;
+}
+
+p.backtotop
+{
+	clear:left;
+	text-align:right;
 }
 
 footer
@@ -162,9 +216,12 @@ footer
 	background-image: url(https://www.unipd.it/sites/unipd.it/themes/unipd_2017/img/logo-UNIPD-white.png);
 	/* TODO salvare copia locale dell'immagine e adeguare url locale */
 	background-repeat: no-repeat;
-	background-position: 1em 1em;
+	background-position: 1em center;
 	min-height: calc(110px + 2em);
+	padding-bottom: 2em;
+	box-sizing: border-box;
 }
+
 
 /*dl:after
 {
@@ -258,6 +315,7 @@ article.book_thumbnail
  	margin: 1em;
 	text-align: left;
 	float:left; 
+	font-size: 0.9em;
 }
 
 article.book_thumbnail h3 
@@ -302,7 +360,7 @@ article.book_thumbnail dd.price
 {
 	font-weight: bold;
 	font-size:1.2em;
-    margin-top: 0.7em;
+    margin-top: 0;
     margin-bottom: 0.7em;
 }
 article.book_thumbnail dd.price .taxes
@@ -400,6 +458,42 @@ article.book_thumbnail a[role=button]:last-child
 		float: left;
 		width: 18em;
 	}
+	nav#mainmenu ol
+	{
+		padding:0;
+	}
+	nav#mainmenu ol,
+	nav#mainmenu ul
+	{
+		list-style: none;
+		margin: 0;
+	}
+	nav#mainmenu ol li a
+	{
+		display: block;
+		padding: 0.15em 0.6em 0.15em;
+	}
+	nav#mainmenu ol > li
+	{
+		padding-right:0.6em;
+		padding-left:0.6em;
+	}
+	nav#mainmenu ol > li.current_page > a
+	{
+		/*border-left: 10px solid #ffffff;*/
+		border-right: 10px solid #ffffff;
+		border-bottom: 1px solid #ffffff;
+		/*border-top: 1px solid #ffffff;
+		border-left: 1px solid #ffffff;*/
+	}
+	nav#mainmenu ol > li > ul
+	{
+		display: none;
+	}
+	nav#mainmenu ol > li:hover > ul
+	{
+		display: block;
+	}
 
 	main
 	{
@@ -415,28 +509,52 @@ article.book_thumbnail a[role=button]:last-child
 	{
 		padding-left: calc(234px + 1em);
 		position: relative;
-		height: 10em;
+		float: left;
+		width: 100%;
+		/*height: 10em;*/
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
 	}
 
 	footer > section#footerSection1 
 	{
-		margin-top: 3.5em;
+		margin-top: 1em;
 		margin-left: 0.5em;
-		width: 45%;
+		border-left: 1px solid #ffffff;
+		padding-left: 1em;
 		float: left;
+		min-height:5em;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
 	}
 
 	footer > section#footerSection2
 	{
-		margin-top: 3.5em;
-		width: 20%;
+		margin-left: 6em;
+		border-left: 1px solid #ffffff;
+		padding-left: 1em;
+		margin-top: 1em;
 		float: left;
+	}
+	footer > section#footerSection2 ol
+	{
+		list-style: none;
+		padding:0;
 	}
 
 	footer > section#footerSection3
 	{
-		margin-top: 1.5em;
-		width: 30%;
-		float: right;
+		margin-left: 6em;
+		border-left: 1px solid #ffffff;
+		padding-left: 1em;
+		margin-top: 1em;
+		float: left;
+	}
+	footer > section#footerSection3 ul
+	{
+		list-style: none;
+		padding:0;
 	}
 }

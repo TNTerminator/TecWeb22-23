@@ -24,9 +24,9 @@ class IndexController
 		$page->setKeywords(""); // TODO
 		$page->setDescription(""); // TODO
 
-		$page->addDictionary("books_latest", self::printBooksLatest(3));
-		$page->addDictionary("books_bestseller", self::printBooksBestSeller(3));
-		$page->addDictionary("books_toprating", self::printBooksTopRating(3));
+		$page->addDictionary("books_latest", self::printBooksLatest(6));
+		$page->addDictionary("books_bestseller", self::printBooksBestSeller(5));
+		$page->addDictionary("books_toprating", self::printBooksTopRating(4));
 
 		$page->render();
 	}

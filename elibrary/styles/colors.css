@@ -14,6 +14,16 @@
 	--inversetextcolor: #ffffff;
 }
 
+body
+{
+	background-color: #00264b;
+}
+
+main
+{
+	background-color: #ffffff;
+}
+
 a,
 a:link
 {
@@ -30,6 +40,15 @@ nav#mainmenu a,
 nav#mainmenu a:link
 {
 	text-decoration: none;
+}
+nav#usermenu a,
+nav#usermenu a:link
+{
+	color: #00264b;
+}
+body > header .userinfo .username
+{
+	color:#d55358;
 }
 
 a:visited
@@ -94,22 +113,23 @@ body > footer a:link
 {
 	color:#ffffff
 }
-
+body > footer a:visited 
+{
+	color:gold;
+}
 body > footer a:hover, 
 body > footer a:focus
 {
-	color: #ffffff;
+	color:rgb(255, 112, 102);
 	text-decoration-style: double;
+	font-weight:bold;
 }
 
-body > footer a:visited {
-	color:#d55358;
-}
 
 
 div.field
 {
-	border-color: #00264b;
+	border-color: blue;
 }
 
 

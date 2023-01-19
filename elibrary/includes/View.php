@@ -598,7 +598,7 @@ class View
 		switch($menuid)
 		{
 			case "adminmenu":
-				return $this->getAdminMenu();
+				//return $this->getAdminMenu();
 				break;
 
 			case "usermenu":
@@ -606,7 +606,7 @@ class View
 				break;
 
 			case "footermenu1":
-				return $this->getUserMenu();
+				return $this->getUserMenu("footermenu1", true);
 				break;
 
 			case "footermenu2":
@@ -635,15 +635,28 @@ class View
 		return $html;	
 	}
 
-	public function getUserMenu()
+	public function getUserMenu($id = "usermenu", $show_title = false)
 	{
-		$html = "<nav id=\"usermenu\">	
+		$html = "";
+		if($show_title)
+		{
+			$html .= "<h3>Menu utente</h3>";
+		}
+		$html .= "<nav id=\"" . $id . "\">	
 		<ol>";
 		if(AuthController::isLogged())
 		{
-			$html .= $this->getMenuItemByController("Carrello", "cart", "index");
-			$html .= $this->getMenuItemByController("Profilo", "profile", "index");
-			$html .= $this->getMenuItemByController("I miei acquisti", "profile", "mylibrary");
+			if(AuthController::isAdmin())
+			{
+				$html .= $this->getMenuItemByController("Gestione categorie", "categories", "list");
+				$html .= $this->getMenuItemByController("Gestione autori", "authors", "list");
+				$html .= $this->getMenuItemByController("Gestione libri", "books", "list");
+			}else
+			{
+				$html .= $this->getMenuItemByController("I miei acquisti", "profile", "mylibrary");
+				$html .= $this->getMenuItemByController("Carrello", "cart", "index");
+				$html .= $this->getMenuItemByController("Profilo", "profile", "index");
+			}
 			$html .= $this->getMenuItemByController("Logout", "auth", "logout");
 		}else
 		{
@@ -745,5 +758,14 @@ class View
 	public function getPHPSESSID()
 	{
 		return Application::current()->PHPSESSID;
+	}
+
+	public function getUserInfo()
+	{
+		if(AuthController::isLogged())
+		{
+			$user = unserialize($_SESSION["LoggedUser"]);
+			return "<div class=\"userinfo\">Benvenuto <span class=\"username\">" . $user->getUsername() . "</span>!</div>";
+		}
 	}
 }

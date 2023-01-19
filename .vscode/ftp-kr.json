@@ -1,14 +1,13 @@
 {
-    "host": "localhost",
-    "username": "acasadom",
-    "password": "Ac31..13",
-    "remotePath": "public_html",
-    "protocol": "sftp",
-    "port": 8022,
+    "host": "ftp.marvago.com",
+    "username": "elibrary@elibrary.marvago.com",
+    "password": "elibrary2022",
+    "protocol": "ftp",
+    "remotePath": "/",
     "fileNameEncoding": "utf8",
-    "autoUpload": false,
-    "autoDelete": false,
-    "autoDownload": false,
+    "autoUpload": true,
+    "autoDelete": true,
+    "autoDownload": true,
     "ignore": [
         ".git",
         "/.vscode",
@@ -17,8 +16,3 @@
 	"localBasePath": "elibrary"
 }
 
-/*
-    "host": "ftp.marvago.com",
-    "username": "elibrary@elibrary.marvago.com",
-    "password": "elibrary2022",
-*/

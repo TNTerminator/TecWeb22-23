@@ -18,6 +18,7 @@
   <body id="##-View::Name-##">
 	<header role="banner">
 		<h1><span></span>##-Global::PROJECT_TITLE-##</h1>
+		##-View::UserInfo-##
 		##-Menu::usermenu-##
 	</header>
 
@@ -36,9 +37,7 @@
 				<fieldset>
 					<legend>Ricerca nel catalogo</legend>
 
-					<label for="search_text" class="hideable">Testo da cercare:</label>
-					<input type="text" name="search_text" id="search_text" value="##-Dict::SearchString-##">
-					<input type="submit" name="CMD_Search" value="Cerca">
+					<label for="search_text" class="hideable">Testo da cercare:</label><input type="text" name="search_text" id="search_text" value="##-Dict::SearchString-##"><input type="submit" name="CMD_Search" value="Cerca">
 				</fieldset>
 			</form>
 		</aside>
@@ -55,7 +54,6 @@
 		<section id="footerSection3">
 			##-Menu::footermenu2-##
 		</section>
-		<p>##-View::PHPSESSID-##</p>
 	</footer>
   </body>
 </html>

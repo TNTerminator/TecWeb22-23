@@ -1,0 +1,16 @@
+/*
+    "host": "ftp.marvago.com",
+    "username": "elibrary@elibrary.marvago.com",
+    "password": "elibrary2022",
+    "protocol": "ftp",
+    "remotePath": "/",
+
+
+
+    "host": "localhost",
+    "username": "acasadom",
+    "password": "Ac31..13",
+    "protocol": "sftp",
+    "port": 8022,
+    "remotePath": "public_html",
+*/
