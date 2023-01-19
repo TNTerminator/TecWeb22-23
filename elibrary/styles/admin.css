@@ -1,0 +1,21 @@
+th, td
+{
+    border:2px solid black;
+    border-radius: 12px;;
+    padding:0.5em;
+}
+
+td
+{
+    text-align:center;
+}
+
+td, th
+{
+    margin: 20px;
+}
+
+tr:nth-child(odd) 
+{
+    background-color: #f2f2f2;
+}
