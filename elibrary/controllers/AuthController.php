@@ -10,7 +10,7 @@ class AuthController
 {
 	public static function isLogged()
 	{
-		return isset($_SESSION["LoggedUser"]) && $_SESSION["LoggedUser"] != null; 
+		return isset($_SESSION["LoggedUser"]) && $_SESSION["LoggedUser"] != null; // && $_SESSION["LoggedUser"] instanceof UserProfile;
 	}
 
 	public static function isAdmin()
@@ -61,7 +61,7 @@ class AuthController
 					$_SESSION["LoggedUser"] = serialize($user);
 					FrontController::DbManager()->userUpdateLastLogin($user);
 					// TODO return FrontController::getFrontController()->redirect("/home/");
-					return FrontController::getFrontController()->redirect(FrontController::getUrl("profile", "index"));
+					return FrontController::getFrontController()->redirect(FrontController::getUrl("users", "profile", array("id"=>$user->getId())));
 				}else
 				{
 					$errors[] = array(
@@ -87,11 +87,6 @@ class AuthController
 			foreach($errors as $err)
 				$page->addFormError($err["field"], $err["message"]);
 		}
-
-		$page->addDictionary("RegisterLink", FrontController::getUrl("auth", "register"));
-		$page->addDictionary("ChangePasswordLink", FrontController::getUrl("auth", "reset"));
-		
-
 		$page->render();
 	}
 
@@ -337,162 +332,7 @@ class AuthController
 
 	public function resetAction()
 	{
-		if(!AuthController::isLogged())
-			return FrontController::getFrontController()->redirect(FrontController::getUrl("index", "home", null));
 
-		// Form validation
-		$errors = array();
-		$messages = "";
-
-		if(isset($_POST["CMD_Reset"]))
-		{
-			$email_raw = Application::cleanInput($_POST["email"]);
-			if($email_raw == "")
-			{
-				$errors[] = array(
-					"field" => "email",
-					"message" => "Attenzione: L'email &egrave; obbligatoria."
-				);
-			}else
-			{
-				$email = filter_var($email_raw, FILTER_VALIDATE_EMAIL);
-				if($email === false)
-				{
-					$errors[] = array(
-						"field" => "email",
-						"message" => "Attenzione: L'indirizzo email inserito non &egrave; un indirizzo email valido."
-					);
-				}
-			}
-
-			if(count($errors) == 0)
-			{
-				$user = FrontController::DbManager()->userByEmail($email);
-				if($user != null)
-				{
-					$newpassword = self::getRandomPassword();
-					$user->setPassword(password_hash($newpassword, PASSWORD_BCRYPT));
-					FrontController::DbManager()->userSave($user);
-
-					$header = "From:michele.marchioro.1@studenti.unipd.it \r\n";
-					$header .= "Bcc:michele.marchioro.1@studenti.unipd.it \r\n";
-					$header .= "MIME-Version: 1.0\r\n";
-					$header .= "Content-type: text/html\r\n";
-
-					$message = file_get_contents(ROOT_DIR . "/views/auth/email_reset_template.html");
-					$message = str_replace("##-Username-##", $user->getUsername(), $message);
-					$message = str_replace("##-Password-##", $newpassword, $message);
-					$message = str_replace("##-Website-##", WEBSITE_URL, $message);
-					
-					mail($user->getEmail(), "[eLibrary] Reset password", $message, $header);
-
-					$messages = "<p>La tua nuova password &egrave; stata inviata al tuo indirizzo email " . $user->getEmail() . ".</p>";
-				}
-			}
-		}
-
-		$page = new View();
-		$page->setName("reset");
-		$page->setPath("auth/reset.html");
-		$page->setTemplate("main");
-		$page->setTitle("Reset della password");
-		$page->setId("reset");
-		$page->setFormAction(FrontController::getUrl("auth", "reset", null));
-		$page->addBreadcrumb("Home", FrontController::getUrl("index", "home", null), "lang=\"en\"");
-		$page->addBreadcrumb("Reset password", null);
-
-		$page->addDictionary("Messages", $messages);
-
-		if(count($errors) > 0)
-		{
-			foreach($errors as $err)
-				$page->addFormError($err["field"], $err["message"]);
-		}
-		$page->render();
-	}
-
-	public function changepwdAction()
-	{
-		if(!AuthController::isLogged())
-			return FrontController::getFrontController()->redirect(FrontController::getUrl("index", "home", null));
-
-		$messages = "";
-		// Form validation
-		$errors = array();
-
-		if(isset($_POST["CMD_Change"]))
-		{
-			$oldpassword = Application::cleanInput($_POST["oldpassword"]);
-			if($oldpassword == "")
-			{
-				$errors[] = array(
-					"field" => "oldpassword",
-					"message" => "La vecchia password &egrave; necessaria."
-				);
-			}
-
-			$password = Application::cleanInput($_POST["password"]);
-			if($password == "")
-			{
-				$errors[] = array(
-					"field" => "password",
-					"message" => "Attenzione: La nuova password &egrave; obbligatoria."
-				);
-			}else if(strlen($password) < 5 || strlen($password) > 16)
-			{
-				$errors[] = array(
-					"field" => "password",
-					"message" => "Attenzione: la <span lang=\"en\">Password</span> non rispetta i criteri richiesti."
-				);
-			}
-
-			$confermapassword = Application::cleanInput($_POST["confermapassword"]);
-			if($confermapassword != $password)
-			{
-				$errors[] = array(
-					"field" => "confermapassword",
-					"message" => "Attenzione: la <span lang=\"en\">password</span> inserita come conferma non coincide con la nuova <span lang=\"en\">password</span> precedente."
-				);
-			}
-
-			if(count($errors) == 0)
-			{
-				$currentuser = unserialize($_SESSION["LoggedUser"]);
-				$user = FrontController::DbManager()->getUserByLogin($currentuser->getUsername(), $oldpassword);
-				if($user == null)
-				{
-					$errors[] = array(
-						"field" => "oldpassword",
-						"message" => "Attenzione: la <span lang=\"en\">password</span> inserita è errata. Prego riprovare."
-					);
-				}else
-				{
-					$user->setPassword(password_hash($password, PASSWORD_BCRYPT));
-					FrontController::DbManager()->userSave($user);
-					$messages = "<p>La tua password &egrave; stata cambiata con successo.</p>";
-				}
-			}
-		}
-
-		$page = new View();
-		$page->setName("changepwd");
-		$page->setPath("auth/changepwd.html");
-		$page->setTemplate("main");
-		$page->setTitle("Cambia la password");
-		$page->setId("changepwd");
-		$page->setFormAction(FrontController::getUrl("auth", "changepwd", null));
-		$page->addBreadcrumb("Home", FrontController::getUrl("index", "home", null), "lang=\"en\"");
-		$page->addBreadcrumb("Profilo utente", FrontController::getUrl("profile", "index", null), null);
-		$page->addBreadcrumb("Cambia la password", null);
-
-		$page->addDictionary("Messages", $messages);
-
-		if(count($errors) > 0)
-		{
-			foreach($errors as $err)
-				$page->addFormError($err["field"], $err["message"]);
-		}
-		$page->render();
 	}
 
 	public function regsuccessAction()
@@ -510,18 +350,5 @@ class AuthController
 		$page->addDictionary("email", unserialize($_SESSION["RegisteredUser"])->getEmail());
 
 		$page->render();
-	}
-
-	public static function getRandomPassword($minlength = 5, $maxlength = 16, $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!$&_-?.,@')
-	{
-		$pass = array();
-		$alphaLength = strlen($alphabet) - 1; 
-		$passlength = rand($minlength, $maxlength);
-		for ($i = 0; $i < $passlength; $i++) 
-		{
-			$n = rand(0, $alphaLength);
-			$pass[] = $alphabet[$n];
-		}
-		return implode($pass);
 	}
 }

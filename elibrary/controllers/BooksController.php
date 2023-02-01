@@ -477,14 +477,6 @@ class BooksController
 						} 
 					}
 					
-					$covercaption = Application::cleanInput($_POST["covercaption"]);
-					if($covercaption == "" && !$uploaderror)
-					{
-						$errors[] = array(
-							"field" => "covercaption",
-							"message" => "Attenzione: quando viene caricata una immagine di copertina, è obbligatorio inserire anche una didascalia di tale immagine."
-						);
-					}
 					$newbook
 						->setCover($cover_file)
 						->setCoverCaption($covercaption);
@@ -803,14 +795,6 @@ class BooksController
 						} 
 					}
 					
-					$covercaption = Application::cleanInput($_POST["covercaption"]);
-					if($covercaption == "" && !$uploaderror)
-					{
-						$errors[] = array(
-							"field" => "covercaption",
-							"message" => "Attenzione: quando viene caricata una immagine di copertina, è obbligatorio inserire anche una didascalia di tale immagine."
-						);
-					}
 					$book
 						->setCover($cover_file)
 						->setCoverCaption($covercaption);
@@ -901,17 +885,12 @@ class BooksController
 	{
 		$html = "";
 		$html .= "<article class=\"book book_thumbnail\">
-	<figure><figcaption>";
-		if($book->getCover() != "")
-			$html .= $book->getCoverCaption();
-		else
-			$html .= "Nessuna immagine di copertina";
-		$html .= "</figcaption><img src=\"";
+	<figure><figcaption>Copertina del libro \"" . $book->getTitle() . "\"</figcaption><img src=\"";
 		if($book->getCover() != "")
 			$html .= FrontController::getAbsoluteUrl(Application::getThumbnail($book->getCover(), 183, 270));
 		else
 			$html .= FrontController::getAbsoluteUrl(Application::getThumbnail("media/notfound.jpg", 183, 270));
-		$html .= "\" alt=\"Immagine di copertina\"></figure>
+		$html .= "\"></figure>
 	<h3>" . $book->getTitle() . "</h3>
 	<dl>
 		<dt class=\"author\">Autore</dt>

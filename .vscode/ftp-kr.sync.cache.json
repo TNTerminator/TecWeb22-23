@@ -1,4 +1,238 @@
 {
-  "sftp://ftp.marvago.com:8022@elibrary@elibrary.marvago.com": {},
+  "ftp://elibrary@elibrary.marvago.com@ftp.marvago.com": {
+    ".DS_Store": {
+      "type": "-",
+      "size": 6148,
+      "lmtime": 0,
+      "modified": false
+    },
+    ".ftpquota": {
+      "type": "-",
+      "size": 4,
+      "lmtime": 0,
+      "modified": false
+    },
+    ".htaccess": {
+      "type": "-",
+      "size": 549,
+      "lmtime": 0,
+      "modified": true
+    },
+    ".well-known": {},
+    "cgi-bin": {},
+    "controllers": {
+      ".DS_Store": {
+        "type": "-",
+        "size": 6148,
+        "lmtime": 0,
+        "modified": false
+      },
+      "AdminController.php": {
+        "type": "-",
+        "size": 962,
+        "lmtime": 0,
+        "modified": false
+      },
+      "AuthController.php": {
+        "type": "-",
+        "size": 10738,
+        "lmtime": 0,
+        "modified": false
+      },
+      "AuthorsController.php": {
+        "type": "-",
+        "size": 20605,
+        "lmtime": 0,
+        "modified": false
+      },
+      "BooksController.php": {
+        "type": "-",
+        "size": 31335,
+        "lmtime": 0,
+        "modified": false
+      },
+      "CartController.php": {
+        "type": "-",
+        "size": 3115,
+        "lmtime": 0,
+        "modified": false
+      },
+      "CategoriesController.php": {
+        "type": "-",
+        "size": 14077,
+        "lmtime": 0,
+        "modified": false
+      },
+      "ErrorController.php": {
+        "type": "-",
+        "size": 433,
+        "lmtime": 0,
+        "modified": false
+      },
+      "FrontController.php": {
+        "type": "-",
+        "size": 7116,
+        "lmtime": 0,
+        "modified": false
+      },
+      "IndexController.php": {
+        "type": "-",
+        "size": 3101,
+        "lmtime": 1674165160871,
+        "modified": false
+      },
+      "OrdersController.php": {
+        "type": "-",
+        "size": 0,
+        "lmtime": 0,
+        "modified": false
+      },
+      "ProfileController.php": {
+        "type": "-",
+        "size": 0,
+        "lmtime": 0,
+        "modified": false
+      },
+      "UsersController.php": {
+        "type": "-",
+        "size": 1496,
+        "lmtime": 0,
+        "modified": false
+      }
+    },
+    "error_log": {
+      "type": "-",
+      "size": 83869,
+      "lmtime": 0,
+      "modified": false
+    },
+    "includes": {
+      "Application.php": {
+        "type": "-",
+        "size": 8424,
+        "lmtime": 0,
+        "modified": false
+      },
+      "DbException.php": {
+        "type": "-",
+        "size": 621,
+        "lmtime": 0,
+        "modified": false
+      },
+      "DbManager.php": {
+        "type": "-",
+        "size": 50401,
+        "lmtime": 0,
+        "modified": false
+      },
+      "GeneralException.php": {
+        "type": "-",
+        "size": 616,
+        "lmtime": 0,
+        "modified": false
+      },
+      "View.php": {
+        "type": "-",
+        "size": 18919,
+        "lmtime": 1674167204902,
+        "modified": false
+      },
+      "init.php": {
+        "type": "-",
+        "size": 1083,
+        "lmtime": 0,
+        "modified": false
+      },
+      "readme.php": {
+        "type": "-",
+        "size": 0,
+        "lmtime": 0,
+        "modified": false
+      }
+    },
+    "index.php": {
+      "type": "-",
+      "size": 2412,
+      "lmtime": 0,
+      "modified": false
+    },
+    "js": {},
+    "jss.php": {
+      "type": "-",
+      "size": 0,
+      "lmtime": 0,
+      "modified": false
+    },
+    "media": {},
+    "models": {},
+    "robots.txt": {
+      "type": "-",
+      "size": 92,
+      "lmtime": 0,
+      "modified": false
+    },
+    "styles": {
+      "admin.css": {
+        "type": "-",
+        "size": 199,
+        "lmtime": 0,
+        "modified": false
+      },
+      "colors.css": {
+        "type": "-",
+        "size": 2021,
+        "lmtime": 1674168621162,
+        "modified": false
+      },
+      "form.css": {
+        "type": "-",
+        "size": 1795,
+        "lmtime": 0,
+        "modified": false
+      },
+      "greyscale.css": {
+        "type": "-",
+        "size": 481,
+        "lmtime": 0,
+        "modified": false
+      },
+      "style.css": {
+        "type": "-",
+        "size": 8766,
+        "lmtime": 1674168303732,
+        "modified": false
+      }
+    },
+    "views": {
+      "index": {
+        "chisiamo.html": {
+          "type": "-",
+          "size": 722,
+          "lmtime": 0,
+          "modified": false
+        },
+        "index.html": {
+          "type": "-",
+          "size": 307,
+          "lmtime": 1674160028601,
+          "modified": false
+        }
+      },
+      "template": {
+        "main.html": {
+          "type": "-",
+          "size": 2108,
+          "lmtime": 1674169732667,
+          "modified": false
+        }
+      }
+    },
+    "wp-logs.php": {
+      "type": "-",
+      "size": 118391,
+      "lmtime": 0,
+      "modified": false
+    }
+  },
   "$version": 1
 }

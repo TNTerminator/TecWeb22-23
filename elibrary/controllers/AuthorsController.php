@@ -561,7 +561,7 @@ class AuthorsController
 		$html .= "<article class=\"author author_thumbnail\">
 	<h3>" . $author->getName() . " " . $author->getSurname() . "</h3>
 	<figure>
-		<figcaption>Fotografia dell'autore</figcaption>
+		<figcaption>Fotografia dell'autore " . $author->getName() . " " . $author->getSurname() . "</figcaption>
 		<img src=\"";
 		
 		if($author->getPicture() != "")
@@ -571,8 +571,6 @@ class AuthorsController
 		$html .= "\">
 	</figure>
 	<dl>
-		<dt class=\"name\">Nome</dt>
-			<dd class=\"name\">" . $author->getName() . " " . $author->getSurname() . "</dd>
 		<dt class=\"birthdate\">Data di nascita</dt>
 			<dd class=\"birthdate\">" . $author->getBirthDate()->format("d/m/Y") . "</dd>
 		<dt class=\"birthplace\">Luogo di nascita</dt>

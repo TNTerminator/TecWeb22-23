@@ -137,7 +137,7 @@ main section
 	clear:left;
 }
 
-main aside
+main > aside
 {
 	position: absolute;
 	top:0;
@@ -146,14 +146,14 @@ main aside
 	width:100%;
 	height:2em;
 }
-main aside form#form_search
+main > aside form#form_search
 {
 	width: auto;
 	float:right;
 	height:100%;
 	margin:0 0 0 0;
 }
-main aside form#form_search fieldset
+main > aside form#form_search fieldset
 {
 	height:100%;
 	border:none;
@@ -161,13 +161,13 @@ main aside form#form_search fieldset
 	background: transparent;
 }
 
-main aside form#form_search fieldset > *
+main > aside form#form_search fieldset > *
 {
 	margin: 0;
 	display: inline-block;
 	height:100%;
 }
-main aside form#form_search fieldset legend
+main > aside form#form_search fieldset legend
 {
 	float: left;
 	font-size:1em;
@@ -175,25 +175,25 @@ main aside form#form_search fieldset legend
 	background: transparent;
 	color: #00264b;
 }
-main aside form#form_search fieldset legend::after
+main > aside form#form_search fieldset legend::after
 {
 	content: ":";
 }
-main aside form#form_search input
+main > aside form#form_search input
 {
 	margin: 0;
 	font-size: 1em;
 }
-main aside form#form_search label
+main > aside form#form_search label
 {
 	display: none;
 }
-main aside form#form_search input[type=text]
+main > aside form#form_search input[type=text]
 {
 	min-width:20em;
 	box-sizing: border-box;
 }
-main aside form#form_search input[type=submit] 
+main > aside form#form_search input[type=submit] 
 {
 	margin:0;
     border: 1px solid #00264b;
@@ -304,7 +304,8 @@ span.val_5::before
 	content:"★★★★★";
 }
 
-article.book_thumbnail
+article.book_thumbnail,
+article.author_thumbnail
 {
 	box-sizing: border-box;
 	box-shadow: 3px 3px 13px 1px #ADADAD;
@@ -318,7 +319,8 @@ article.book_thumbnail
 	font-size: 0.9em;
 }
 
-article.book_thumbnail h3 
+article.book_thumbnail h3,
+article.author_thumbnail h3
 {
 	text-align: center;
 	font-weight: normal;
@@ -327,23 +329,78 @@ article.book_thumbnail h3
 }
 
 article.book_thumbnail figure,
-article.book_thumbnail figure img
+article.book_thumbnail figure img,
+article.author_thumbnail figure,
+article.author_thumbnail figure img
 {
 	width: 100%;
+}
+article.book_full > figure,
+article.book_full > figure img,
+article.author_full > figure,
+article.author_full > figure img
+{
+	float:left;
+	/*width:50%;
+	min-width:300px;*/
+	margin-right: 0.6em;
+}
+
+article.book_thumbnail figure,
+article.book_thumbnail figure img
+{
 	border-radius: 15px 15px 0 0;
 }
-article.book_thumbnail figure figcaption
+article.book_thumbnail figure figcaption,
+article.author_thumbnail figure figcaption,
+article.book_full figure figcaption,
+article.author_full figure figcaption
 {
 	display: none;
 }
 
+article.author_thumbnail dl
+{
+	width:min-content;
+	margin-left:auto;
+	margin-right:auto;
+}
+article.book_full dt,
+article.author_full dt,
+article.author_thumbnail dt
+{
+	display: inline;
+	font-weight: bold;
+	white-space: nowrap;
+}
 article.book_thumbnail dt
 {
 	display: none;
 }
+article.book_full dt::after,
+article.author_full dt::after,
+article.author_thumbnail dt::after
+{
+	content: ": ";
+}
+article.book_full dd,
+article.author_full dd,
+article.author_thumbnail dd
+{
+	display: inline;
+	white-space: nowrap;
+}
+article.book_full dd::after,
+article.author_full dd::after,
+article.author_thumbnail dd::after
+{
+	content: "\a";
+	white-space: pre;
+}
 
 article.book_thumbnail dd
 {
+	display: block;
 	text-align: center;
 }
 article.book_thumbnail dd.author
@@ -371,7 +428,8 @@ article.book_thumbnail dd.price .taxes
 	font-style: italic;
 }
 
-article.book_thumbnail a[role=button]
+article.book_thumbnail a[role=button],
+article.author_thumbnail a[role=button]
 {
 	display: block;
   	padding: 12px;
@@ -386,9 +444,17 @@ article.book_thumbnail a[role=button].addtocart
 	text-transform: uppercase;
 }
 
-article.book_thumbnail a[role=button]:last-child
+article.book_thumbnail a[role=button]:last-child,
+article.author_thumbnail a[role=button]:last-child
 {
 	border-radius: 0 0 15px 15px;
+}
+
+article.book_full > aside,
+article.author_full > aside 
+{
+	clear:left;
+	padding-top:1em; 
 }
 
 @media only screen and (max-width: 600px) 

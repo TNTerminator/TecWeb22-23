@@ -10,22 +10,28 @@ class UsersController
 {
 	public function indexAction()
 	{
+		/*$thumbWidth = 300;
+		$thumbHeight = 200;
+
 		$page = new View();
 		$page->setName("index");
-		$page->setPath("users/index.html");
+		$page->setPath("index/index.html");
 		$page->setTemplate("main");
-		$page->setTitle("Gestione degli utenti");
+		$page->setTitle("Entra in libreria da dovunque nel mondo");
 		$page->setId("home");
 		$page->addBreadcrumb("Home", null, "lang=\"en\"");
 		$page->setAuthors(Application::PROJECT_AUTHORS);
 		$page->setKeywords(""); // TODO
 		$page->setDescription(""); // TODO
 
-		$page->render();
+		$page->render();*/
 	}
 
 	public function profileAction($id)
 	{
+		$thumbWidth = 300;
+		$thumbHeight = 200;
+
 		$page = new View();
 		$page->setName("profile");
 		$page->setPath("users/profile.html");
@@ -43,24 +49,7 @@ class UsersController
 		$page->addDictionary("Email", $user->getEmail());
 		$page->addDictionary("BirthDate", $user->getBirthDate()->format("d/m/y"));
 		$page->addDictionary("PreferredPlace", $user->getAdditionalInfo());
-		$page->addDictionary("ChangePassword", FrontController::getUrl("auth", "changepwd"));
-		$page->addDictionary("ProfileLibrary", FrontController::getUrl("profile", "library"));
 
 		$page->render();
-	}
-
-	public function listAction()
-	{
-		// TODO
-	}
-
-	public function viewAction($id)
-	{
-		// TODO
-	}
-
-	public function deleteAction()
-	{
-		// TODO
 	}
 }
