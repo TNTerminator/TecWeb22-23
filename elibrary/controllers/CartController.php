@@ -127,6 +127,7 @@ class CartController
 		
 		$page->render();
 	}
+	
 	public static function printCartRow($book, $authors, $quantity)
 	{
 		$html = "<div class=\"cart_row\">";

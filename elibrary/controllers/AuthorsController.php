@@ -534,8 +534,8 @@ class AuthorsController
 
 		if($picture_file != "")
 		{
-			$html = "<figure><img src=\"" . FrontController::getAbsoluteUrl(Application::getThumbnail($picture_file, 300, 405)) . "\">";
-			$html .= "</figure>";
+			$html = "<figure><img src=\"" . FrontController::getAbsoluteUrl(Application::getThumbnail($picture_file, 300, 405)) . "\" alt=\"Anteprima dell'immagine caricata\">";
+			$html .= "<figcaption>Anteprima dell'immagine caricata</figcaption></figure>";
 			$page->addDictionary("picture_preview", $html);
 		}
 
@@ -568,7 +568,7 @@ class AuthorsController
 			$html .= FrontController::getAbsoluteUrl(Application::getThumbnail($author->getPicture(), 200, 270));
 		else
 			$html .= FrontController::getAbsoluteUrl(Application::getThumbnail("media/notfound.jpg", 200, 270));
-		$html .= "\">
+		$html .= "\" alt=\"" . $author->getName() . " " . $author->getSurname() . "\">
 	</figure>
 	<dl>
 		<dt class=\"birthdate\">Data di nascita</dt>

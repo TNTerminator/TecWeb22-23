@@ -94,6 +94,7 @@ class AuthController
 	{
 		session_unset();
 		session_destroy();
+		session_start();
 		return FrontController::getFrontController()->redirect(FrontController::getUrl("index", "home", null));
 	}
 
@@ -332,7 +333,131 @@ class AuthController
 
 	public function resetAction()
 	{
+		// Form validation
+		$errors = array();
 
+		if(isset($_POST["CMD_Reset"]))
+		{
+			$username = Application::cleanInput($_POST["username"]);
+			if($username == "")
+			{
+				$errors[] = array(
+					"field" => "username",
+					"message" => "Lo username non pu&ograve; essere vuoto."
+				);
+			}
+
+			$password = Application::cleanInput($_POST["password"]);
+			if($password == "")
+			{
+				$errors[] = array(
+					"field" => "password",
+					"message" => "La password &egrave; necessaria."
+				);
+			}
+
+			if(count($errors) == 0)
+			{
+				$user = FrontController::DbManager()->getUserByLogin($username, $password);
+				if($user != null)
+				{
+					$_SESSION["LoggedUser"] = serialize($user);
+					FrontController::DbManager()->userUpdateLastLogin($user);
+					// TODO return FrontController::getFrontController()->redirect("/home/");
+					return FrontController::getFrontController()->redirect(FrontController::getUrl("users", "profile", array("id"=>$user->getId())));
+				}else
+				{
+					$errors[] = array(
+						"field" => "username",
+						"message" => "Username o password errati."
+					);
+				}
+			}
+		}
+
+		$page = new View();
+		$page->setName("reset");
+		$page->setPath("auth/reset.html");
+		$page->setTemplate("main");
+		$page->setTitle("Resetta la password");
+		$page->setId("reset");
+		$page->setFormAction(FrontController::getUrl("auth", "reset", null));
+		$page->addBreadcrumb("Profilo", FrontController::getUrl("profile", "index", null), null);
+		$page->addBreadcrumb("Reset della password", null);
+
+		if(count($errors) > 0)
+		{
+			foreach($errors as $err)
+				$page->addFormError($err["field"], $err["message"]);
+		}
+		$page->render();
+	}
+
+
+	public function changepwdAction()
+	{
+		// Check if user already logged in
+		if(AuthController::isLogged())
+			return FrontController::getFrontController()->redirect(FrontController::getUrl("index", "home", null));
+
+		// Form validation
+		$errors = array();
+
+		if(isset($_POST["CMD_Reset"]))
+		{
+			$username = Application::cleanInput($_POST["username"]);
+			if($username == "")
+			{
+				$errors[] = array(
+					"field" => "username",
+					"message" => "Lo username non pu&ograve; essere vuoto."
+				);
+			}
+
+			$password = Application::cleanInput($_POST["password"]);
+			if($password == "")
+			{
+				$errors[] = array(
+					"field" => "password",
+					"message" => "La password &egrave; necessaria."
+				);
+			}
+
+			if(count($errors) == 0)
+			{
+				$user = FrontController::DbManager()->getUserByLogin($username, $password);
+				if($user != null)
+				{
+					$_SESSION["LoggedUser"] = serialize($user);
+					FrontController::DbManager()->userUpdateLastLogin($user);
+					// TODO return FrontController::getFrontController()->redirect("/home/");
+					return FrontController::getFrontController()->redirect(FrontController::getUrl("users", "profile", array("id"=>$user->getId())));
+				}else
+				{
+					$errors[] = array(
+						"field" => "username",
+						"message" => "Username o password errati."
+					);
+				}
+			}
+		}
+
+		$page = new View();
+		$page->setName("reset");
+		$page->setPath("auth/reset.html");
+		$page->setTemplate("main");
+		$page->setTitle("Resetta la password");
+		$page->setId("reset");
+		$page->setFormAction(FrontController::getUrl("auth", "reset", null));
+		$page->addBreadcrumb("Profilo", FrontController::getUrl("profile", "index", null), null);
+		$page->addBreadcrumb("Reset della password", null);
+
+		if(count($errors) > 0)
+		{
+			foreach($errors as $err)
+				$page->addFormError($err["field"], $err["message"]);
+		}
+		$page->render();
 	}
 
 	public function regsuccessAction()

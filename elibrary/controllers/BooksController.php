@@ -849,9 +849,8 @@ class BooksController
 
 		if($cover_file != "")
 		{
-			$html = "<figure><img src=\"" . FrontController::getAbsoluteUrl(Application::getThumbnail($cover_file, 300, 405)) . "\">";
-			if($covercaption != "")
-				$html .= "<figcaption>" . $covercaption . "</figcaption>";
+			$html = "<figure><img src=\"" . FrontController::getAbsoluteUrl(Application::getThumbnail($cover_file, 300, 405)) . "\" alt=\"Anteprima dell'immagine caricata\">";
+			$html .= "<figcaption>Anteprima dell'immagine caricata</figcaption>";
 			$html .= "</figure>";
 			$page->addDictionary("cover_preview", $html);
 		}
@@ -890,7 +889,7 @@ class BooksController
 			$html .= FrontController::getAbsoluteUrl(Application::getThumbnail($book->getCover(), 183, 270));
 		else
 			$html .= FrontController::getAbsoluteUrl(Application::getThumbnail("media/notfound.jpg", 183, 270));
-		$html .= "\"></figure>
+		$html .= "\" alt=\"Copertina del libro \"" . $book->getTitle() . "\"></figure>
 	<h3>" . $book->getTitle() . "</h3>
 	<dl>
 		<dt class=\"author\">Autore</dt>

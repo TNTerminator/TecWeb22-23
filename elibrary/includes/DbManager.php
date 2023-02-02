@@ -36,10 +36,11 @@ class DbManager
 	{
 		if(UNIPD_DELIVER)
 		{
-			$this->DB_HOST = "localhost";
-			$this->DB_NAME = "asalviat"; // TODO
-			$this->DB_USER = "asalviat";
-			$this->DB_PASS = "iexaezain4Reb8Lo";
+			$this->DB_HOST = "localhost";			
+			$this->DB_NAME = "acasadom";
+			$this->DB_USER = "acasadom";
+			$this->DB_PASS = "ii1EeY9quie8eich";
+
 		}else
 		{
 			$this->DB_HOST = "localhost";
@@ -1064,6 +1065,66 @@ class DbManager
 		return $language;
 	}
 
+	public function userSelect($id)
+	{
+		$user = null;
+		$stmt = null;
+		try
+		{
+			$stmt = $this->Connection()->prepare("SELECT * FROM users WHERE IDUser = ?");
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito la creazione: " . htmlspecialchars($this->Connection()->error), DbException::ERR_PREPSTMT, $e);
+		}		
+		try
+		{
+			$stmt->bind_param("i", $id);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{
+				$userassoc = $result->fetch_assoc();
+				$datanascita = DateTime::createFromFormat("Y-m-d", $userassoc["BirthDate"]);
+				if ($datanascita === false)
+					$datanascita = null;
+				$tscreate = DateTime::createFromFormat("Y-m-d H:i:s", $userassoc["TsCreate"]);
+				if ($tscreate === false)
+					$tscreate = null;
+				$tsupdate = $userassoc["TsUpdate"]!=null ? DateTime::createFromFormat("Y-m-d H:i:s", $userassoc["TsUpdate"]) : null;
+				if ($tsupdate === false)
+					$tsupdate = null;
+				$tslastlogin = $userassoc["TsLastLogin"]!=null ? DateTime::createFromFormat("Y-m-d H:i:s", $userassoc["TsLastLogin"]) : null;
+				if ($tslastlogin === false)
+					$tslastlogin = null;
+
+				$user = new User();
+				$user
+					->setId($userassoc["IDUser"])
+					->setType($userassoc["IDUserType"])
+					->setUsername($userassoc["Username"])
+					->setEmail($userassoc["Email"])
+					->setPassword($userassoc["Password"])
+					->setName($userassoc["Name"])
+					->setSurname($userassoc["Surname"])
+					->setBirthDate($datanascita)
+					->setAdditionalInfo($userassoc["AdditionalInfo"])
+					->setPrivacy($userassoc["F_Privacy"])
+					->setMarketing($userassoc["F_Marketing"])
+					->setTsCreate($tscreate)
+					->setTsUpdate($tsupdate)
+					->setTsLastLogin($tslastlogin);
+			}
+			$result->close();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $user;
+	}
+
 	public function userSave(User $user)
 	{
 		if($user->getId() == null)
@@ -1182,6 +1243,57 @@ class DbManager
 		}
 	}
 
+	public function ordersList($iduser)
+	{
+		$orders = array();
+		
+		try
+		{
+			$sqlstring = "SELECT * FROM orders WHERE IDUser = ?";
+			$stmt = $this->Connection()->prepare($sqlstring);
+			$stmt->bind_param("i", $iduser);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if($result->num_rows > 0)
+			{ 
+				while($ordassoc = $result->fetch_assoc())
+				{
+					$TsCreate = DateTime::createFromFormat("Y-m-d H:i:s", $ordassoc["TsCreate"]);
+					$order = new Order();
+					$order
+						->setId($ordassoc["IDOrder"])
+						->setIdUser($ordassoc["IDUser"])
+						->setTsCreate($TsCreate);
+					$orders[] = $order;
+
+					$sqlstring = "SELECT * FROM orders_details WHERE IDOrder = ?";
+					$stmt2 = $this->Connection()->prepare($sqlstring);
+					$idorder = $order->getId();
+					$stmt2->bind_param("i", $idorder);
+					$stmt2->execute();
+					$result2 = $stmt2->get_result();
+					if($result2->num_rows > 0)
+					{ 
+						while($ord2assoc = $result2->fetch_assoc())
+						{
+							$order->addDetail($ord2assoc["IDBook"], $ord2assoc["Quantity"]);
+						}
+					}
+					$result2->close();
+					$stmt2->close();
+				}
+			}
+			$result->close();
+		}catch(mysqli_sql_exception $e)
+		{
+			throw new DbException("Il prepared statement ".__FUNCTION__." ha fallito l'execute: " . htmlspecialchars($stmt->error), DbException::ERR_QUERY, $e);
+		}finally
+		{
+			$stmt->close();
+		}
+		return $orders;
+	}
+
 	public function orderSelect($idorder, $iduser)
 	{
 		$order = null;
@@ -1270,6 +1382,8 @@ class DbManager
 		}
 		return true;
 	}
+
+
 
 	public function checkUsernameExists($username)
 	{
